@@ -3,7 +3,7 @@
 # Collaborators: 
 # Time: 
 # Problem 1: 10 minutes
-# Problem 2: 9:52 AM
+# Problem 2: 08 minutes 
 
 
 import random
@@ -54,7 +54,6 @@ def get_frequency_dict(sequence):
     for x in sequence:
         freq[x] = freq.get(x,0) + 1
     return freq
-
 
 # (end of helper code)
 # -----------------------------------
@@ -153,7 +152,13 @@ def update_hand(hand, word):
     returns: dictionary (string -> int)
     """
     # TO DO ...
+    newHand = dict(hand)
+    for letter in word:
+        newHand[letter] = newHand.get(letter, 0) - 1
+        # print newHand
+    return newHand
 
+        
 #
 # Problem #3: Test word validity
 #
