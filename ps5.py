@@ -1,8 +1,10 @@
 # Problem Set 5: 6.00 Word Game
-# Name: 
+# Name: Scott Brenner
 # Collaborators: 
 # Time: 
-#
+# Problem 1: 10 minutes
+# Problem 2: 9:52 AM
+
 
 import random
 import string
@@ -76,7 +78,13 @@ def get_word_score(word, n):
     returns: int >= 0
     """
     # TO DO ...
+    # Initialize score to 0.  If word uses all letters set value to 50.
+    score = 0
+    if len(word) >= n: score = 50
 
+    for letter in word: score += SCRABBLE_LETTER_VALUES[letter]
+
+    return score
 #
 # Make sure you understand how this function works and what it does!
 #
