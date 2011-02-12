@@ -1,6 +1,6 @@
 # Problem Set 5: Ghost
 # Name: 
-# Collaborators: 
+# Collaborators: None
 # Time: 
 #
 
