@@ -4,9 +4,9 @@
 # Time: 
 # Problem 1: 10 minutes
 # Problem 2: 08 minutes
-# Problem 4: 27 minutes
+# Problem 3: 27 minutes
+# Problem 4: 00 minutes 10:55 AM 11:29 AM
 # Problem 5: 00 minutes
-# Problem 6: 00 minutes
 
 
 
@@ -223,8 +223,45 @@ def play_hand(hand, word_list):
       word_list: list of lowercase strings
     """
     # TO DO ...
-    print "play_hand not implemented." # replace this with your code...
+    score = 0
+    # The hand is displayed.
+    player_hand = deal_hand(HAND_SIZE)
+    print 'Dealing...Here is your hand:', display_hand(hand)
 
+    # The user may input a word.
+    word = raw_input('play a word:')
+    
+    # An invalid word is rejected, and a message is displayed asking the user to choose another word.
+    if is_valid_word(word, hand, word_list):
+        
+        # When a valid word is entered, it uses up letters from the hand.
+        hand = update_hand(hand, word)
+        
+        # After every valid word: the score for that word and the total      score so far are displayed, the remaining letters in the hand are displayed, and the user is asked to input another word.
+        wordScore = get_word_score(word, HAND_SIZE)
+        print "That word scores", wordScore, "points."
+        score += wordScore
+        print "Your total score:", score
+        print "Your have the remaining letters:", display_hand(hand)
+        word = raw_input("You can also finish playing the hand by inputing a single period '.'")
+        
+    else:
+        word = raw_input("That word isn't in the dictionary.  Try again:")
+        
+
+
+
+
+    # The sum of the word scores is displayed when the hand finishes.
+
+    # The hand finishes when there are no more unused letters. The user can also finish playing the hand by inputing a single period (the string '.') instead of a word.
+
+    # The final score is displayed.
+
+
+#play_hand({'t':2,'a':2,'c':2,'o':1}, load_words())
+    
+    
 #
 # Problem #5: Playing a game
 # Make sure you understand how this code works!
