@@ -1,0 +1,137 @@
+1) Are each of the following True or False:
+	1.1. Any program that can be written using only function definitions and calls, the basic arithmetic operators, assignment, and conditionals will run in constant time.  FALSE.  Constant time means execution takes the same time every time. Conditionals mean it could branch and take various times to execute.
+	1.2. Newton's method will always converge on a correct root of a function.
+		FALSE.  It can bogged down and bounce between two values.
+	1.3. In Python, dictionaries are immutable.
+		FALSE.  Tuples are immutable.  But this question seems pre-mature.
+	1.4. The value of "math.sqrt(2.0)*math.sqrt(2.0) == 2.0" is True.  FALSE.  The binary representation of sqrt of not precise enough.
+	1.5. One should always avoid iteration when a recursive solution is possible.  FALSE
+	1.6. Typically, the use of functions in a program reduces the total number of lines of code.  TRUE
+	1.7. In Python, retrieving the value associated with a dictionary key takes roughly constant time.  No Idea.  Wasn't covered yet.  But I will guess TRUE.
+	
+
+2) Consider the implementations of compare1 and compare2, where a and b are floats. 
+	2.1) Do compare1 and compare2 return the same value for all possible inputs? SURE LOOKS LIKE IT.  BUT I DOUBT IT.
+	If not, give a pair of inputs for which they return a different value.
+	2.2) Do compare1 and compare2 print the same thing for all possible inputs?  If not, give a pair of inputs for which they print different things.
+
+	
+	def compare1(a, b):
+		if a < 0:
+			a = -a
+		if b < 0:
+			b = -b
+		res = (a == b)
+		if res:
+			print a, 'and', b, 'have the same absolute value.'
+		else:
+			print a, 'and', b, 'have different absolute values.'
+		return res
+		
+		*** Test Values:
+		a = 7
+		b = .7
+		------------------------------------------------------------------------
+	
+	def absolute_value(n):
+		if n < 0:
+			n = -n
+		return n
+
+	def compare2(a, b):
+		res = absolute_value(a) == absolute_value(b)
+		if res:
+			print a, 'and', b, 'have the same absolute value.' 
+		else:
+			print a, 'and', b, 'have different absolute values.' 
+		return res
+	
+	
+3) Consider the following implementation of a function f, where x is a positive integer:
+	def f(x):
+		xs = str(x)   					#	"2112" 
+		if len(xs) == 1: 				#	FALSE LEN(XS) = 4
+			return int(xs)
+		n = int(xs[0]) + int(xs[1])  	#	N = 1 + 2 = 3
+		if len(xs) == 2:				#	FALSE LEN(XS) = 4
+			return n
+		else:
+			return n + f(xs[2:])		#	3 + F(12);  F(12) = 3
+		
+		What does f(2112) return?  6
+			
+	3.2. Write a specification of f."""F SUMS THE FIRST TWO DIGITS OF THE VALUE PASSED, AND THEN ADDS THEM TO THE SUM OF THE NEXT TWO DIGITS, THIS CONTINUES UNTIL ALL DIGITS HAVE BEEN SUMMED. IF THE VALUE PASSED IS AN ODD NUBMER OF DIGITS THEN THE LAST DIGIT IS ADDED DIRECTLY TO THE THE PRIOR SUM."""
+
+4) Provide a Python implementation of a function first_N that takes a positive integer, n, as its only argument. The function should print the first n perfect squares that are not even numbers. E.g., if n were 2 it should print the perfect squares 1 and 9.
+	## ANSWER:
+	def first_N(n):		"""first_N that takes a positive integer, n, as its only argument. The function should print the first n perfect squares that are not even numbers. E.g., if n were 2 it should print the perfect squares 1 and 9."""		answer = []		counter = 1							while len(answer) < n:			squared = counter * counter			if squared%2 != 0:				answer.append(squared)			counter += 1		print 'The first n perfect squares that are not even numbers are:', answer		
+5. Write pseudo code for an exhaustive enumeration variant of guess and check.
+	Pick a number between 1 and 100: number
+	for i in range(100)
+		response = raw_input ("Is you number",i)
+		if response == yes:
+			break
+	print answer		
+
+6.) Provide a Python implementation for the function findSide specified below
+	def findSide():
+		"""asks the user to enter the area of a rectangle and the length of one side of the rectangle. Returns a floating point number that is the length of the adjacent side."""
+		#	l * w = a      w = a / l
+		#
+		#  	area = 35
+		#	length = 6
+		#	Width = 5.8333
+		
+		#	get the user input
+		area = raw_input("What is the area of the rectangle:")
+		length = raw_input("What is the length of one side:")
+		
+		float(area)
+		float(length)
+		
+		width = 0.0	#	initialize answer as a float
+		
+		width = area / length
+
+		return width
+		
+
+7) Does the following function meet its specification? If not, change the program so that it is consistent with the specification.
+
+	def f(L):
+		"""Returns a copy of the list L without modifying L."""
+		result = []
+		for e in L:
+			result.append(e)
+		return result
+		
+	THIS FUNCTION DOES WORK CORRECTLY.
+
+		
+8) At McDonalds one can buy chicken nuggets in packages containing 6, 9 or 20 pieces. Write a Python function that accepts an integer, num, as an argument and decides whether or not it is possible to buy num nuggets at McDonalds.
+
+	def even_buy(num):
+		"""Accepts an integer, num, as an argument and decides whether or not it is possible to buy num nuggets at McDonalds."""
+		#	6x + 9y + 20z = num
+		
+		for x in range(num):
+			for y in range(num):
+				for z in range (num):
+					if 6*x + 9*y + 20*z == num:
+						print 'buy', x, 'six packs,', y, 'nine packs, and', z,'twenty packs.'
+						return (x,y,z)
+		return None
+						
+
+9) Write an appropriate specification for the function below. Assume that n is an integer.
+
+	def f(n):
+		"""Take a number n and returns the reverse of the digits.  E.g., f(239) returns 932 as a string."""
+		#	s = 9		Result:  '9'
+		#	s = 39		Result:  '9' + '3'
+		#	s = 239		Result:  '9' + '3' + '2'
+		
+		s = str(n)
+		if len(s) <= 1:
+			return s
+		return s[-1] + f(int(s[:-1]))
