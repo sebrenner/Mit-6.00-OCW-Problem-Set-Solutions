@@ -3,7 +3,12 @@
 # Collaborators: 
 # Time: 
 # Problem 1: 10 minutes
-# Problem 2: 08 minutes 
+# Problem 2: 08 minutes
+# Problem 4: 27 minutes
+# Problem 5: 00 minutes
+# Problem 6: 00 minutes
+
+
 
 
 import random
@@ -173,6 +178,18 @@ def is_valid_word(word, hand, word_list):
     word_list: list of lowercase strings
     """
     # TO DO ...
+    countingHand = dict(hand)
+
+    # Check if word is in dictionary using bisect search
+    if word in word_list:
+        # Check if hand has necessary letter. If letter is in hand decrement letter count in hand
+        for letter in word:
+            if countingHand.get(letter, 0) > 0:
+                countingHand[letter] -= 1
+            else:
+                return False # The words had a letter that was not in the hand.
+    else: return False
+    return True
 
 #
 # Problem #4: Playing a hand
