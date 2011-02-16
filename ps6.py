@@ -160,7 +160,7 @@ def update_hand(hand, word):
 #
 # Problem #3: Test word validity
 #
-def is_valid_word(word, hand, word_list):
+def is_valid_word(word, hand, point_dict):
     """
     Returns True if word is in the word_list and is entirely
     composed of letters in the hand. Otherwise, returns False.
@@ -170,11 +170,11 @@ def is_valid_word(word, hand, word_list):
     hand: dictionary (string -> int)
     word_list: list of lowercase strings
     """
-    freq = get_frequency_dict(word)
+    freq = get_frequency_dict(word)                 # Create dictionary frequency dictionary for word.  E.g., if work is 'hello', freq = {'h': 1, 'e': 1, 'l': 2, 'o': 1}.
     for letter in word:
-        if freq[letter] > hand.get(letter, 0):
+        if freq[letter] > hand.get(letter, 0):      # Confirm that each letter needed to spell word is in the hand in sufficient quantity.
             return False
-    return word in word_list
+    return word in point_dict
 
 #
 # Problem #4: Playing a hand
@@ -276,9 +276,31 @@ def play_game(word_list):
         else:
             print "Invalid command."
 
+    
+def pick_best_word(hand, points_dict):
+    """
+    Return the highest scoring word from points_dict that can be made with the given hand.
+
+    Return '.' if no words can be made with the given hand.
+    """
+
+    return "."
+    
+def get_words_to_point(word_list):
+    """
+    Return a dict that maps every word in word_list to its point value.
+    """
+    word_value_dictionary = {}
+    for word in word_list:
+        word_value_dictionary[word] = get_word_score(word, 7)
+    return word_value_dictionary
+    #return len(word_value_dictionary)
+    
+
 #
 # Build data structures used for entire session and play game
 #
 if __name__ == '__main__':
     word_list = load_words()
+    point_dict = get_words_to_point(word_list)
     play_game(word_list)
