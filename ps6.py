@@ -205,7 +205,7 @@ def play_hand(hand, word_list):
       hand: dictionary (string -> int)
       word_list: list of lowercase strings
     """    
-    total = 0
+    total = 0.0
     initial_handlen = sum(hand.values())
     while sum(hand.values()) > 0:
         print 'Current Hand:',
@@ -222,11 +222,11 @@ def play_hand(hand, word_list):
             if not isValid:
                 print 'Invalid word, please try again.'
             else:
-                points = get_word_score(userWord, initial_handlen)
+                points = get_word_score(userWord, initial_handlen) / totalTime
                 total += points
-                print '%s earned %d points. Total: %d points' % (userWord, points, total)
+                print '%s earned %0.2f points. Total: %0.2f points' % (userWord, points, total)
                 hand = update_hand(hand, userWord)
-    print 'Total score: %d points.' % total
+    print 'Total score: %0.2f points.' % total
 
 
 #
