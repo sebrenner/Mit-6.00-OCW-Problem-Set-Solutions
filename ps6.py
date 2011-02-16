@@ -207,16 +207,28 @@ def play_hand(hand, word_list):
     """    
     total = 0.0
     initial_handlen = sum(hand.values())
+    foo = True
+    totalTime = 0.0
+    while foo:
+        chessTime = raw_input('Enter time limit, in seconds, for players:')
+        if chessTime.isdigit():
+            chessTime = float(chessTime)
+            foo = False
     while sum(hand.values()) > 0:
         print 'Current Hand:',
         display_hand(hand)
         startTime = time.time()
         userWord = raw_input('Enter word, or a . to indicate that you are finished: ')
         endTime = time.time()
-        totalTime = endTime - startTime
-        print 'It took %0.2f to enter your word.' % totalTime
+        playTime = endTime - startTime
+        print "It took %0.2f seconds to provide an answer." % playTime
+        totalTime += playTime
         if userWord == '.':
-             break
+            break
+        elif totalTime > chessTime:
+            print 'It took %0.2f to enter your word.' % totalTime
+            print 'Total time exceeds %0.2f seconds. You scored %0.2f points.' % (chessTime, total)
+            break
         else:
             isValid = is_valid_word(userWord, hand, word_list)
             if not isValid:
