@@ -2,9 +2,12 @@
 #
 # The 6.00 Word Game
 #
+# Scott Brenner
+# Problem 1: 9:07 PM
 
 import random
 import string
+import time
 
 VOWELS = 'aeiou'
 CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
@@ -207,7 +210,11 @@ def play_hand(hand, word_list):
     while sum(hand.values()) > 0:
         print 'Current Hand:',
         display_hand(hand)
+        startTime = time.time()
         userWord = raw_input('Enter word, or a . to indicate that you are finished: ')
+        endTime = time.time()
+        totalTime = endTime - startTime
+        print 'It took %0.2f to enter your word.' % totalTime
         if userWord == '.':
              break
         else:
