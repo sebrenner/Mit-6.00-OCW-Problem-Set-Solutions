@@ -12,6 +12,7 @@ import time
 VOWELS = 'aeiou'
 CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
 HAND_SIZE = 7
+COMPUTER_TIME_FACTOR = 1
 
 SCRABBLE_LETTER_VALUES = {
     'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
@@ -210,18 +211,20 @@ def play_hand(hand, word_list):
     foo = True
     totalTime = 0.0
     while foo:
-        chessTime = raw_input('Enter time limit, in seconds, for players:')
-        if chessTime.isdigit():
-            chessTime = float(chessTime)
-            foo = False
+        chessTime = get_time_limit(point_dict, COMPUTER_TIME_FACTOR)
+        #chessTime = raw_input('Enter time limit, in seconds, for players:')
+        # if chessTime.isdigit():
+        #            chessTime = float(chessTime)
+        #            foo = False
     while sum(hand.values()) > 0:
         print 'Current Hand:',
         display_hand(hand)
         startTime = time.time()
-        userWord = raw_input('Enter word, or a . to indicate that you are finished: ')
+        # userWord = raw_input('Enter word, or a . to indicate that you are finished: ')
+        userWord = pick_best_word(hand, point_dict)
         endTime = time.time()
         playTime = endTime - startTime
-        print "It took %0.2f seconds to provide an answer." % playTime
+        print "It took %0.2f seconds to play %s." % (playTime, userWord)
         totalTime += playTime
         if userWord == '.':
             break
@@ -289,7 +292,7 @@ def pick_best_word(hand, points_dict):
     for word in points_dict:
         if is_valid_word(word, hand, points_dict):
             word_value = get_word_score(word, HAND_SIZE)
-            print "The word is %s, with value %i.   The best word is %s, with value %i." % (word, word_value, best_word, best_word_value)
+            #print "The word is %s, with value %i.   The best word is %s, with value %i." % (word, word_value, best_word, best_word_value)
             if word_value > best_word_value:
                 best_word = word
                 best_word_value = word_value
@@ -330,5 +333,4 @@ def get_time_limit(points_dict, k):
 if __name__ == '__main__':
     word_list = load_words()
     point_dict = get_words_to_point(word_list)
-    print pick_best_word({'w': 2, 'i': 1, 'n': 1 , 's': 1, 'd': 1, 'o': 1}, point_dict)
-    #play_game(word_list)
+    play_game(word_list)
