@@ -3,7 +3,9 @@
 # The 6.00 Word Game
 #
 # Scott Brenner
-# Problem 1: 9:07 PM
+# Problem 1: 25 minutes
+# Problem 2: 35 minutes
+# Problem 3: ~2 hours
 
 import random
 import string
