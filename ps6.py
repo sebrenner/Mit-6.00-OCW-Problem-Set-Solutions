@@ -283,7 +283,18 @@ def pick_best_word(hand, points_dict):
 
     Return '.' if no words can be made with the given hand.
     """
-
+    freq = get_frequency_dict(hand)     # Create dictionary frequency dictionary for the hand
+    best_word = ""
+    best_word_value = 0
+    for word in points_dict:
+        if is_valid_word(word, hand, points_dict):
+            word_value = get_word_score(word, HAND_SIZE)
+            print "The word is %s, with value %i.   The best word is %s, with value %i." % (word, word_value, best_word, best_word_value)
+            if word_value > best_word_value:
+                best_word = word
+                best_word_value = word_value
+    if best_word_value > 0:
+        return best_word
     return "."
     
 def get_words_to_point(word_list):
@@ -295,7 +306,23 @@ def get_words_to_point(word_list):
         word_value_dictionary[word] = get_word_score(word, 7)
     return word_value_dictionary
     #return len(word_value_dictionary)
+
+
+def get_time_limit(points_dict, k): 
+    """
+    Return the time limit for the computer player as a function of the multiplier k.
     
+    points_dict should be the same dictionary that is created by get_words_to_points.
+    """
+    start_time = time.time()
+    # Do some computation. The only purpose of the computation is so we can
+    # figure out how long your computer takes to perform a known task.
+    for word in points_dict:
+        get_frequency_dict(word)
+        get_word_score(word, HAND_SIZE)
+    end_time = time.time()
+    return (end_time - start_time) * k
+
 
 #
 # Build data structures used for entire session and play game
@@ -303,4 +330,5 @@ def get_words_to_point(word_list):
 if __name__ == '__main__':
     word_list = load_words()
     point_dict = get_words_to_point(word_list)
-    play_game(word_list)
+    print pick_best_word({'w': 2, 'i': 1, 'n': 1 , 's': 1, 'd': 1, 'o': 1}, point_dict)
+    #play_game(word_list)
