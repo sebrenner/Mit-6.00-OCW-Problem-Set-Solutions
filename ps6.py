@@ -212,12 +212,13 @@ def play_hand(hand, word_list):
     initial_handlen = sum(hand.values())
     foo = True
     totalTime = 0.0
-    while foo:
-        chessTime = get_time_limit(point_dict, COMPUTER_TIME_FACTOR)
-        #chessTime = raw_input('Enter time limit, in seconds, for players:')
-        # if chessTime.isdigit():
-        #            chessTime = float(chessTime)
-        #            foo = False
+    chessTime = get_time_limit(point_dict, COMPUTER_TIME_FACTOR)
+    # this is commented out because it was replaced by the line above.  The line above sets chessTime based on computer speed.  The commented code aske the user for chessTime.
+    # while foo:
+    #     chessTime = raw_input('Enter time limit, in seconds, for players:')
+    #     if chessTime.isdigit():
+    #         chessTime = float(chessTime)
+    #         foo = False
     while sum(hand.values()) > 0:
         print 'Current Hand:',
         display_hand(hand)
