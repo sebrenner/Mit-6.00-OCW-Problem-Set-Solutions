@@ -42,6 +42,26 @@ def load_words():
         wordlist.append(line.strip().lower())
     print "  ", len(wordlist), "words loaded."
     return wordlist
+    
+def get_word_rearrangements(a_list_of_words):
+    """
+    Create a dict where, for any set of letters, you can determine if there is some acceptable word that is a rearrangement of those letters.
+    Let d = {}
+    For every word w in the word list:
+        Let d[(string containing the letters of w in sorted order)] = w
+    """
+    rearrange_dict = {}
+    for word in a_list_of_words:
+        #   build a list from the char in word: 1) convert word string to list, 2) sort list, 3) convert list back to string.
+        char_list =[]
+        my_string = ''
+        for char in word:
+            char_list.append(char)
+        char_list.sort()
+        for each in range(len(char_list)):
+            my_string +=char_list[each]
+        rearrange_dict[my_string] = word
+    return rearrange_dict
 
 def get_frequency_dict(sequence):
     """
