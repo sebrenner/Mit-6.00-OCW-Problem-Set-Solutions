@@ -6,6 +6,9 @@
 # Problem 1: 25 minutes
 # Problem 2: 35 minutes
 # Problem 3: ~2 hours
+# Problem 1: 15 minutes
+# Problem 2: 35 mintues
+# Problem 3: in progress
 
 import random
 import string
@@ -14,7 +17,7 @@ import time
 VOWELS = 'aeiou'
 CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
 HAND_SIZE = 7
-COMPUTER_TIME_FACTOR = 1
+COMPUTER_TIME_FACTOR = 2
 
 SCRABBLE_LETTER_VALUES = {
     'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
@@ -228,11 +231,12 @@ def play_hand(hand, word_list):
       hand: dictionary (string -> int)
       word_list: list of lowercase strings
     """    
-    total = 0.0
+    total_points = 0.0
     initial_handlen = sum(hand.values())
     foo = True
-    totalTime = 0.0
+    elapsed_time = 0.0
     chessTime = get_time_limit(point_dict, COMPUTER_TIME_FACTOR)
+    print "Computer will have %0.2f seconds to play the hand" % chessTime
     # this is commented out because it was replaced by the line above.  The line above sets chessTime based on computer speed.  The commented code aske the user for chessTime.
     # while foo:
     #     chessTime = raw_input('Enter time limit, in seconds, for players:')
@@ -240,6 +244,7 @@ def play_hand(hand, word_list):
     #         chessTime = float(chessTime)
     #         foo = False
     while sum(hand.values()) > 0:
+        print
         print 'Current Hand:',
         display_hand(hand)
         startTime = time.time()
@@ -248,23 +253,26 @@ def play_hand(hand, word_list):
         endTime = time.time()
         playTime = endTime - startTime
         print "It took %0.2f seconds to play %s." % (playTime, userWord)
-        totalTime += playTime
+        elapsed_time += playTime
         if userWord == '.':
             break
-        elif totalTime > chessTime:
-            print 'It took %0.2f to enter your word.' % totalTime
-            print 'Total time exceeds %0.2f seconds. You scored %0.2f points.' % (chessTime, total)
+        elif elapsed_time > chessTime:
+            print "It took %0.2f seconds to play %s." % (playTime, userWord)
+            # print 'It took %0.2f seconds to enter your word.' % elapsed_time
+            print 'Your total time to play the hand exceeded %0.2f seconds. Your final score is %0.2f points.' % (chessTime, total_points)
             break
         else:
             isValid = is_valid_word(userWord, hand, word_list)
             if not isValid:
                 print 'Invalid word, please try again.'
             else:
-                points = get_word_score(userWord, initial_handlen) / totalTime
-                total += points
-                print '%s earned %0.2f points. Total: %0.2f points' % (userWord, points, total)
+                if playTime < 1: playTime = 1
+                points = get_word_score(userWord, initial_handlen) /  playTime
+                total_points += points
+                print '%s earned %0.2f points. Total: %0.2f points' % (userWord, points, total_points)
                 hand = update_hand(hand, userWord)
-    print 'Total score: %0.2f points.' % total
+    print 'Total score: %0.2f points.' % total_points
+    return total_points
 
 
 #
@@ -288,19 +296,26 @@ def play_game(word_list):
     """
 
     hand = deal_hand(HAND_SIZE) # random init
-    while True:
-        cmd = raw_input('Enter n to deal a new hand, r to replay the last hand, or e to end game: ')
-        if cmd == 'n':
+    hand_score = 0.0
+    counter = 0
+    while hand_score < 40 or counter > 100:
             hand = deal_hand(HAND_SIZE)
-            play_hand(hand.copy(), word_list)
-            print
-        elif cmd == 'r':
-            play_hand(hand.copy(), word_list)
-            print
-        elif cmd == 'e':
-            break
-        else:
-            print "Invalid command."
+            hand_score = play_hand(hand.copy(), word_list)
+            counter +=1
+    print "Counter %i." %counter 
+    # while hand_score < 40:
+    #     cmd = raw_input('Enter n to deal a new hand, r to replay the last hand, or e to end game: ')
+    #     if cmd == 'n':
+    #         hand = deal_hand(HAND_SIZE)
+    #         play_hand(hand.copy(), word_list)
+    #         print
+    #     elif cmd == 'r':
+    #         play_hand(hand.copy(), word_list)
+    #         print
+    #     elif cmd == 'e':
+    #         break
+    #     else:
+    #         print "Invalid command."
 
     
 def pick_best_word(hand, points_dict):
@@ -349,6 +364,28 @@ def get_time_limit(points_dict, k):
     end_time = time.time()
     return (end_time - start_time) * k
 
+def build_substrings(string):
+    """
+    Works on the premiss that given a set of the substrings of a string the
+    the subsets of a string with one more char is the formed by taking all the
+    substrings in the known subset and also adding to them the set formed by
+    adding the character to every element in the old set and then adding the 
+    new char.
+
+    """
+    result = []
+    if len(string) == 1:
+        result.append(string)
+        print "Result in case sting lenght is 1", result
+    else:
+        for substring in build_substrings(string[:-1]):
+            result.append(substring)
+            substring = substring + string[-1]
+            result.append(substring)
+        result.append(string[-1])
+        result = list(set(result))  # Convert result into a set.  Sets have no duplicates. Then convert back to list.
+        result.sort()
+    return result
 
 #
 # Build data structures used for entire session and play game
