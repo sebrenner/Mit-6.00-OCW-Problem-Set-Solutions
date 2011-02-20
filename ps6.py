@@ -298,7 +298,7 @@ def play_game(word_list):
     hand = deal_hand(HAND_SIZE) # random init
     hand_score = 0.0
     counter = 0
-    while hand_score < 40 or counter > 100:
+    while hand_score < 40 or counter < 100:
             hand = deal_hand(HAND_SIZE)
             hand_score = play_hand(hand.copy(), word_list)
             counter +=1
