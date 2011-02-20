@@ -15,7 +15,7 @@ import time
 VOWELS = 'aeiou'
 CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
 HAND_SIZE = 7
-COMPUTER_TIME_FACTOR = 2
+COMPUTER_TIME_FACTOR = 1
 
 SCRABBLE_LETTER_VALUES = {
 'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
@@ -427,4 +427,22 @@ if __name__ == '__main__':
     word_list = load_words()
     point_dict = get_words_to_point(word_list)
     arranged_words = get_word_rearrangements(word_list)
+    #print len(arranged_words)
     play_game(word_list)
+
+
+
+
+## Problem 5 ##
+# your response here.
+# as many lines as you want.
+# 
+# pick_best_word()
+#     This method creates a dictionary of every valid word mapped to the point value.  Then it iterates through the dictionary comparing the hand to the word.  If they word can be made from the hand then the word's score is compared to the word score of the earlier possible word.  The higher score word is retained.
+#     Under this method the point value dictionary must be built and then the function iterates through comparing the hand to eveyr possible word.
+#     Amortizing the time-cost of building the dictionary over each pick, the time complexity of this method grows with the length of the word list and independently from the size of the hand
+#     
+# pick_best_word_faster()
+#   This method also begins by creating a dictionary.  Each value in the dictioanry is a valid word.  Each key is a alphabetized string of the letters in the word. E.g., {'acot':'taco'}.  Note that each key is unique but the value isn't necessarily unique.  The dictionary value for 'acot' could be 'coat'.  This is because the dictionary only needs to list every valid alpahbetized string of letters.  Not ever valid word.  This makes the dictionary the same size or shorter than the dictionary created in pick_best_word().  For the word list used in this problem the savings is ~14,000 entries (83667 words, 69091 dict keys)
+#     Armed with this dictionary the function can take advantage of the speed of the "in dictionary" function, which I thinks is logarithmic.  The next part of this function is build a set of substrings of hand.  The function then iterates through this set of substrings checking if they are in the dictionary, and comparing their point value to the prior highest value string in the dictionary.  The function returns the highest point value value from the dictionary.
+#     This method is much faster than pick_best_word() because is takes adavantice of the bysect search functionality built into search dicstionaries.  This bysect search algorithm grow logarithmically based on the length of dictionary.
