@@ -242,7 +242,8 @@ def play_hand(hand, word_list):
         display_hand(hand)
         startTime = time.time()
         # userWord = raw_input('Enter word, or a . to indicate that you are finished: ')
-        userWord = pick_best_word_faster(hand, arranged_words)
+        userWord = pick_best_word_faster(hand, arranged_words) # 'faster' function
+        # userWord = pick_best_word(hand, point_dict) # orignial fuction
         endTime = time.time()
         playTime = endTime - startTime
         print "It took %0.5f seconds to play %s." % (playTime, userWord)
@@ -440,9 +441,23 @@ if __name__ == '__main__':
 # pick_best_word()
 #     This method creates a dictionary of every valid word mapped to the point value.  Then it iterates through the dictionary comparing the hand to the word.  If they word can be made from the hand then the word's score is compared to the word score of the earlier possible word.  The higher score word is retained.
 #     Under this method the point value dictionary must be built and then the function iterates through comparing the hand to eveyr possible word.
-#     Amortizing the time-cost of building the dictionary over each pick, the time complexity of this method grows with the length of the word list and independently from the size of the hand
+#     Amortizing the time-cost of building the dictionary over each pick, the time complexity of this method grows with the length of the word list and independently from the size of the hand.  Adding letters to the hand will increase the time to execute but only negligibly.  I think the computational complexity of the function is linear.
+# 
+#   With a hand size of 7 letters the time to pick best word was less than .6 seconds.
+#   With a hand size of 17 letters the time to pick best word was ~.6 seconds.
+#   With a hand size of 25 letters the time to pick best word was ~.65 seconds.
+
+
+
 #     
 # pick_best_word_faster()
 #   This method also begins by creating a dictionary.  Each value in the dictioanry is a valid word.  Each key is a alphabetized string of the letters in the word. E.g., {'acot':'taco'}.  Note that each key is unique but the value isn't necessarily unique.  The dictionary value for 'acot' could be 'coat'.  This is because the dictionary only needs to list every valid alpahbetized string of letters.  Not ever valid word.  This makes the dictionary the same size or shorter than the dictionary created in pick_best_word().  For the word list used in this problem the savings is ~14,000 entries (83667 words, 69091 dict keys)
 #     Armed with this dictionary the function can take advantage of the speed of the "in dictionary" function, which I thinks is logarithmic.  The next part of this function is build a set of substrings of hand.  The function then iterates through this set of substrings checking if they are in the dictionary, and comparing their point value to the prior highest value string in the dictionary.  The function returns the highest point value value from the dictionary.
 #     This method is much faster than pick_best_word() because is takes adavantice of the bysect search functionality built into search dicstionaries.  This bysect search algorithm grow logarithmically based on the length of dictionary.
+#   Adding letters to the hand will increase the time to execute the function that creates the subsets, but they dicitonary search is the more significant funciton.  I think the computational complexity of the function is logarithmic.
+
+#   With a hand size of 7 letters the time to pick best word was less than .001 seconds.
+#   With a hand size of 17 letters the time to pick best word was between .3 and .5 seconds.
+#   With a hand size of 25 letters the time to pick best word was between 15 and 45 seconds.
+
+#   Comparing the two functions, it appears the pick_best_word_faster() is much faster for relatively small hands and any size dictionary.  But pick_best_word() is faster if the hands will be large.  Not surprisingly the 'better' function depends on the specifics of the problem.
