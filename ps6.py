@@ -5,10 +5,7 @@
 # Scott Brenner
 # Problem 1: 25 minutes
 # Problem 2: 35 minutes
-# Problem 3: ~2 hours
-# Problem 1: 15 minutes
-# Problem 2: 35 mintues
-# Problem 3: in progress
+# Problem 3: ~8 hours
 
 import random
 import string
@@ -20,7 +17,7 @@ HAND_SIZE = 7
 COMPUTER_TIME_FACTOR = 2
 
 SCRABBLE_LETTER_VALUES = {
-    'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
+'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
 }
 
 # -----------------------------------
@@ -29,6 +26,8 @@ SCRABBLE_LETTER_VALUES = {
 
 WORDLIST_FILENAME = "words.txt"
 
+# -----------------------------------
+# PREPROCESSSING FUNCTIONS- These prep the word lists/dictionaries for game play.  They should execute only once--when the app is launched.  They include function used for scoring and for the computer-player.
 def load_words():
     """
     Returns a list of valid words. Words are strings of lowercase letters.
@@ -45,9 +44,26 @@ def load_words():
         wordlist.append(line.strip().lower())
     print "  ", len(wordlist), "words loaded."
     return wordlist
-    
+
+def sort_word(word_string):
+    """
+    Takes a string, alphabetizes it and returns it as a string.
+    """
+    char_list =[]
+    sorted_string = ''
+    for char in word_string:
+        char_list.append(char)
+    char_list.sort()
+    for char in char_list:
+        sorted_string += char
+    return sorted_string
+
 def get_word_rearrangements(a_list_of_words):
     """
+    This function takes a list of words and returns a dictionary of strings mapped to actual words.
+    
+    This function is used by the computer-player to find valid words.
+    
     Create a dict where, for any set of letters, you can determine if there is some acceptable word that is a rearrangement of those letters.
     Let d = {}
     For every word w in the word list:
@@ -64,6 +80,7 @@ def get_word_rearrangements(a_list_of_words):
         for each in range(len(char_list)):
             my_string +=char_list[each]
         rearrange_dict[my_string] = word
+    #print "In get_word_rearrangements. Rrearrange_dict:", rearrange_dict
     return rearrange_dict
 
 def get_frequency_dict(sequence):
@@ -71,7 +88,7 @@ def get_frequency_dict(sequence):
     Returns a dictionary where the keys are elements of the sequence
     and the values are integer counts, for the number of times that
     an element is repeated in the sequence.
-
+    
     sequence: string or list
     return: dictionary
     """
@@ -81,25 +98,18 @@ def get_frequency_dict(sequence):
         freq[x] = freq.get(x,0) + 1
     return freq
 
-
-# (end of helper code)
-# -----------------------------------
-
-#
-# Problem #1: Scoring a word
-#
 def get_word_score(word, n):
     """
     Returns the score for a word. Assumes the word is a
     valid word.
-
+    
     The score for a word is the sum of the points for letters
     in the word, plus 50 points if all n letters are used on
     the first go.
-
+    
     Letters are scored as in Scrabble; A is worth 1, B is
     worth 3, C is worth 3, D is worth 2, E is worth 1, and so on.
-
+    
     word: string (lowercase letters)
     returns: int >= 0
     """
@@ -110,19 +120,19 @@ def get_word_score(word, n):
         score += 50
     return score
 
-#
-# Make sure you understand how this function works and what it does!
-#
+
+# -----------------------------------
+# GAME PLAY FUNCTIONS- These functions start and play the game play.  They will execute mulitple times.
 def display_hand(hand):
     """
     Displays the letters currently in the hand.
-
+    
     For example:
        display_hand({'a':1, 'x':2, 'l':3, 'e':1})
     Should print out something like:
        a x x l l l e
     The order of the letters is unimportant.
-
+    
     hand: dictionary (string -> int)
     """
     for letter in hand.keys():
@@ -130,18 +140,15 @@ def display_hand(hand):
              print letter,              # print all on the same line
     print                              # print an empty line
 
-#
-# Make sure you understand how this function works and what it does!
-#
 def deal_hand(n):
     """
     Returns a random hand containing n lowercase letters.
     At least n/3 the letters in the hand should be VOWELS.
-
+    
     Hands are represented as dictionaries. The keys are
     letters and the values are the number of times the
     particular letter is repeated in that hand.
-
+    
     n: int >= 0
     returns: dictionary (string -> int)
     """
@@ -157,7 +164,6 @@ def deal_hand(n):
         hand[x] = hand.get(x, 0) + 1
         
     return hand
-
 #
 # Problem #2: Update a hand by removing letters
 #
@@ -167,10 +173,10 @@ def update_hand(hand, word):
     In other words, this assumes that however many times
     a letter appears in 'word', 'hand' has at least as
     many of that letter in it. 
-
+    
     Updates the hand: uses up the letters in the given word
     and returns the new hand, without those letters in it.
-
+    
     word: string
     hand: dictionary (string -> int)    
     returns: dictionary (string -> int)
@@ -181,7 +187,6 @@ def update_hand(hand, word):
         newhand[char] = hand[char]-freq.get(char,0)
     return newhand
     #return dict( ( c, hand[c] - freq.get(c,0) ) for c in hand )
-        
 
 #
 # Problem #3: Test word validity
@@ -208,29 +213,28 @@ def is_valid_word(word, hand, point_dict):
 def play_hand(hand, word_list):
     """
     Allows the user to play the given hand, as follows:
-
     * The hand is displayed.
     
     * The user may input a word.
-
-    * An invalid word is rejected, and a message is displayed asking
-      the user to choose another word.
-
+    
+    * An invalid word is rejected, and a message is displayed asking the user to choose another word.
+    
     * When a valid word is entered, it uses up letters from the hand.
-
+    
     * After every valid word: the score for that word is displayed,
       the remaining letters in the hand are displayed, and the user
       is asked to input another word.
-
+    
     * The sum of the word scores is displayed when the hand finishes.
-
+    
     * The hand finishes when there are no more unused letters.
       The user can also finish playing the hand by inputing a single
       period (the string '.') instead of a word.
-
+      
       hand: dictionary (string -> int)
       word_list: list of lowercase strings
     """    
+    
     total_points = 0.0
     initial_handlen = sum(hand.values())
     foo = True
@@ -275,30 +279,24 @@ def play_hand(hand, word_list):
     return total_points
 
 
-#
-# Problem #5: Playing a game
-# Make sure you understand how this code works!
-# 
 def play_game(word_list):
     """
     Allow the user to play an arbitrary number of hands.
-
     * Asks the user to input 'n' or 'r' or 'e'.
-
-    * If the user inputs 'n', let the user play a new (random) hand.
-      When done playing the hand, ask the 'n' or 'e' question again.
-
+    
+    * If the user inputs 'n', let the user play a new (random) hand. When done playing the hand, ask the 'n' or 'e' question again.
+    
     * If the user inputs 'r', let the user play the last hand again.
-
+    
     * If the user inputs 'e', exit the game.
-
+    
     * If the user inputs anything else, ask them again.
     """
-
+    
     hand = deal_hand(HAND_SIZE) # random init
     hand_score = 0.0
     counter = 0
-    while hand_score < 40 or counter < 100:
+    while hand_score < 40 or counter > 5:
             hand = deal_hand(HAND_SIZE)
             hand_score = play_hand(hand.copy(), word_list)
             counter +=1
@@ -317,11 +315,13 @@ def play_game(word_list):
     #     else:
     #         print "Invalid command."
 
-    
+
+# -----------------------------------
+# COMPUTER PLAYER FUNCTIONS- These functions play the computer's hand.  They find and play the best word.  They will execute mulitple times.
 def pick_best_word(hand, points_dict):
     """
     Return the highest scoring word from points_dict that can be made with the given hand.
-
+    
     Return '.' if no words can be made with the given hand.
     """
     freq = get_frequency_dict(hand)     # Create dictionary frequency dictionary for the hand
@@ -337,7 +337,7 @@ def pick_best_word(hand, points_dict):
     if best_word_value > 0:
         return best_word
     return "."
-    
+
 def get_words_to_point(word_list):
     """
     Return a dict that maps every word in word_list to its point value.
@@ -348,6 +348,44 @@ def get_words_to_point(word_list):
     return word_value_dictionary
     #return len(word_value_dictionary)
 
+def pick_best_word_faster(hand, rearrange_dict):
+    """
+    Takes a hand {dictionary} and a dictionary of letter combinations that map to a valid word.
+    
+    Returns the highest value word or '.'-if there is no valid word possible.
+    
+    Pseudo-code:
+    To find some word that can be made out of the letters in HAND:
+        For each subset S of the letters of HAND:
+            Let w = (string containing the letters of S in sorted order)
+            If w in d:
+                return d[w]
+    """
+    print "In pick best. Hand:", hand
+    hand_string = ''
+    
+    for each in hand:
+        hand_string += each
+        
+    print "Hand sorted: %s" %hand_string
+    
+    best_word =''
+    best_word_score = 0
+    subsets = build_substrings(hand_string)
+    subset_value = 0
+    
+    for subset in subsets:
+        sorted_subset = sort_word(subset)
+        if sorted_subset in rearrange_dict:
+            subset_value = get_word_score(sorted_subset, HAND_SIZE)
+            if subset_value > best_word_score:
+                best_word = rearrange_dict[sorted_subset]                
+                best_word_score = subset_value
+
+    if best_word_score > 0:
+        return best_word
+    else:
+        return '.'
 
 def get_time_limit(points_dict, k): 
     """
@@ -371,12 +409,11 @@ def build_substrings(string):
     substrings in the known subset and also adding to them the set formed by
     adding the character to every element in the old set and then adding the 
     new char.
-
+    
     """
     result = []
     if len(string) == 1:
         result.append(string)
-        print "Result in case sting lenght is 1", result
     else:
         for substring in build_substrings(string[:-1]):
             result.append(substring)
@@ -385,12 +422,17 @@ def build_substrings(string):
         result.append(string[-1])
         result = list(set(result))  # Convert result into a set.  Sets have no duplicates. Then convert back to list.
         result.sort()
+    # now iterate through substrings and sort the characters of each substring    
+    #for each in 
     return result
 
-#
-# Build data structures used for entire session and play game
+
+# -----------------------------------
+# PLAY GAME: Build data structures used for entire session and play game.
 #
 if __name__ == '__main__':
     word_list = load_words()
     point_dict = get_words_to_point(word_list)
-    play_game(word_list)
+    arranged_words = get_word_rearrangements(word_list)
+    print pick_best_word_faster(deal_hand(HAND_SIZE),arranged_words)
+    #play_game(word_list)
