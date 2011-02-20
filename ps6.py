@@ -164,9 +164,7 @@ def deal_hand(n):
         hand[x] = hand.get(x, 0) + 1
         
     return hand
-#
-# Problem #2: Update a hand by removing letters
-#
+
 def update_hand(hand, word):
     """
     Assumes that 'hand' has all the letters in word.
@@ -188,9 +186,6 @@ def update_hand(hand, word):
     return newhand
     #return dict( ( c, hand[c] - freq.get(c,0) ) for c in hand )
 
-#
-# Problem #3: Test word validity
-#
 def is_valid_word(word, hand, point_dict):
     """
     Returns True if word is in the word_list and is entirely
@@ -207,9 +202,6 @@ def is_valid_word(word, hand, point_dict):
             return False
     return word in point_dict
 
-#
-# Problem #4: Playing a hand
-#
 def play_hand(hand, word_list):
     """
     Allows the user to play the given hand, as follows:
@@ -240,7 +232,7 @@ def play_hand(hand, word_list):
     foo = True
     elapsed_time = 0.0
     chessTime = get_time_limit(point_dict, COMPUTER_TIME_FACTOR)
-    print "Computer will have %0.2f seconds to play the hand" % chessTime
+    print "\nComputer will have %0.2f seconds to play the hand.\n" % chessTime
     # this is commented out because it was replaced by the line above.  The line above sets chessTime based on computer speed.  The commented code aske the user for chessTime.
     # while foo:
     #     chessTime = raw_input('Enter time limit, in seconds, for players:')
@@ -253,17 +245,17 @@ def play_hand(hand, word_list):
         display_hand(hand)
         startTime = time.time()
         # userWord = raw_input('Enter word, or a . to indicate that you are finished: ')
-        userWord = pick_best_word(hand, point_dict)
+        userWord = pick_best_word_faster(hand, arranged_words)
         endTime = time.time()
         playTime = endTime - startTime
-        print "It took %0.2f seconds to play %s." % (playTime, userWord)
+        print "It took %0.5f seconds to play %s." % (playTime, userWord)
         elapsed_time += playTime
         if userWord == '.':
             break
         elif elapsed_time > chessTime:
-            print "It took %0.2f seconds to play %s." % (playTime, userWord)
+            print "It took %0.5f seconds to play %s." % (playTime, userWord)
             # print 'It took %0.2f seconds to enter your word.' % elapsed_time
-            print 'Your total time to play the hand exceeded %0.2f seconds. Your final score is %0.2f points.' % (chessTime, total_points)
+            print 'Your total time to play the hand exceeded %0.5f seconds. Your final score is %0.2f points.' % (chessTime, total_points)
             break
         else:
             isValid = is_valid_word(userWord, hand, word_list)
@@ -273,11 +265,11 @@ def play_hand(hand, word_list):
                 if playTime < 1: playTime = 1
                 points = get_word_score(userWord, initial_handlen) /  playTime
                 total_points += points
-                print '%s earned %0.2f points. Total: %0.2f points' % (userWord, points, total_points)
+                print '%s earned %0.5f points. Total: %0.5f points' % (userWord, points, total_points)
                 hand = update_hand(hand, userWord)
-    print 'Total score: %0.2f points.' % total_points
+                #print 'Updated hand:%s' % hand
+    print 'Total score: %0.5f points.' % total_points
     return total_points
-
 
 def play_game(word_list):
     """
@@ -293,28 +285,29 @@ def play_game(word_list):
     * If the user inputs anything else, ask them again.
     """
     
-    hand = deal_hand(HAND_SIZE) # random init
-    hand_score = 0.0
-    counter = 0
-    while hand_score < 40 or counter > 5:
-            hand = deal_hand(HAND_SIZE)
-            hand_score = play_hand(hand.copy(), word_list)
-            counter +=1
-    print "Counter %i." %counter 
-    # while hand_score < 40:
-    #     cmd = raw_input('Enter n to deal a new hand, r to replay the last hand, or e to end game: ')
-    #     if cmd == 'n':
+    # hand_score = 0.0
+    # counter = 0
+    # while hand_score < 40 or counter < 5:
     #         hand = deal_hand(HAND_SIZE)
-    #         play_hand(hand.copy(), word_list)
-    #         print
-    #     elif cmd == 'r':
-    #         play_hand(hand.copy(), word_list)
-    #         print
-    #     elif cmd == 'e':
-    #         break
-    #     else:
-    #         print "Invalid command."
-
+    #         hand_score = play_hand(hand.copy(), word_list)
+    #         print "Counter %i." %counter 
+    #         counter += 1
+    # print "Counter %i." %counter 
+    
+    hand = deal_hand(HAND_SIZE) # random init
+    while True:
+        cmd = raw_input('Enter n to deal a new hand, r to replay the last hand, or e to end game: ')
+        if cmd == 'n':
+            hand = deal_hand(HAND_SIZE)
+            play_hand(hand.copy(), word_list)
+            print
+        elif cmd == 'r':
+            play_hand(hand.copy(), word_list)
+            print
+        elif cmd == 'e':
+            break
+        else:
+            print "Invalid command."
 
 # -----------------------------------
 # COMPUTER PLAYER FUNCTIONS- These functions play the computer's hand.  They find and play the best word.  They will execute mulitple times.
@@ -360,14 +353,17 @@ def pick_best_word_faster(hand, rearrange_dict):
             Let w = (string containing the letters of S in sorted order)
             If w in d:
                 return d[w]
+                
+    This function must convert the hand{dictionary} to a string.  In doing so it must check to make sure that the value of each key in the had is > 0
     """
-    print "In pick best. Hand:", hand
+    #print "In pick best. Hand:", hand
     hand_string = ''
     
     for each in hand:
-        hand_string += each
+        if hand[each] > 0:
+            hand_string += each * hand[each]
         
-    print "Hand sorted: %s" %hand_string
+    #print "Hand sorted: %s" %hand_string
     
     best_word =''
     best_word_score = 0
@@ -381,7 +377,7 @@ def pick_best_word_faster(hand, rearrange_dict):
             if subset_value > best_word_score:
                 best_word = rearrange_dict[sorted_subset]                
                 best_word_score = subset_value
-
+    
     if best_word_score > 0:
         return best_word
     else:
@@ -434,5 +430,4 @@ if __name__ == '__main__':
     word_list = load_words()
     point_dict = get_words_to_point(word_list)
     arranged_words = get_word_rearrangements(word_list)
-    print pick_best_word_faster(deal_hand(HAND_SIZE),arranged_words)
-    #play_game(word_list)
+    play_game(word_list)
