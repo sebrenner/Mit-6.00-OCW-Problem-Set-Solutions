@@ -9,29 +9,86 @@ Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 
 import sys
 import os
-import random
-import string
 import time
 
-##  create all subsets of 'windows'
+def fact0(i):
+	"""
+	Takes and int and returns the factorial of that int.
+	Recursive.
+	"""
+	
+	assert type(i) == int and i >= 0
+	if i == 0 or i == 1:
+		return 1
+	return i * fact0(i-1)
 
-word = 'windows'
-list_of_submultisets = []
+test_range = range(2,200)
 
-for i in word:
-    print
-    print i,
-    #list_of_submultisets += [i]
-    for j in word[1:]:
-        print j
-    #     for k in word[2:]:
-    #         list_of_submultisets += [i+j+k]
-    #         for l in word[3:]:
-    #             list_of_submultisets += [i+j+k+l]
-    #             for m in word[4:]:
-    #                 list_of_submultisets += [i+j+k+l+m]
-    #                 for n in word[5:]:
-    #                     list_of_submultisets += [i+j+k+l+m+n]
-    #                     for o in word[6:]:
-    #                         list_of_submultisets += [i+j+k+l+m+n+o]
-#print list_of_submultisets 
+start_time = time.time()
+for i in test_range:
+    fact0(i)
+end_time = time.time()
+print "Total time to complete fact0(i):", end_time - start_time
+
+def fact1(i):
+	"""
+	Takes and int and returns the factorial of that int.
+	Use a while loop.
+	"""
+	
+	assert type(i) == int and i >= 0
+	res = 1
+	while i > 1:
+		res = res * i
+		i -= 1
+	return res
+
+start_time = time.time()
+for i in test_range:
+    fact1(i)
+end_time = time.time()
+print "Total time to complete fact1(i):", end_time - start_time
+
+def makeSet(s):
+    """
+    Takes a string and returns a set of the string.  I.e., it removes any duplicates.
+    """
+    assert type(s) == str
+    res = ''
+    for c in s:
+        if not c in res:
+            res = res + c
+    return res
+
+i = 'aklf sfea'
+
+start_time = time.time()
+makeSet(i)
+end_time = time.time()
+print "Total time to complete makeSet(i):", end_time - start_time
+
+
+
+def intersect(s1, s2):
+	"""
+	Takes two strings and returns a strings of all the characters that appear in both strings.
+	"""
+	assert type(s1) == str and type(s2) == str
+	s1 = makeSet(s1)
+	s2 = makeSet(s2)
+	res = ''
+	for e in s1:
+		if e in s2:
+			res = res + e
+	return res
+s2 = "missy"
+s1 = "mississipi"
+start_time = time.time()
+print intersect(s1, s2)
+end_time = time.time()
+print "Total time to complete intersect(s1, s2):", end_time - start_time
+
+
+
+
+
