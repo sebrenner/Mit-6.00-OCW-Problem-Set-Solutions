@@ -11,94 +11,51 @@ import sys
 import os
 import time
 
-def fact0(i):
-	"""
-	Takes and int and returns the factorial of that int.
-	Recursive.
-	"""
-	
-	assert type(i) == int and i >= 0
-	if i == 0 or i == 1:
-		return 1
-	return i * fact0(i-1)
 
-test_range = range(2,200)
+def fib1(n):
+    global memo
+    global numCalls
+    numCalls = 0 
+    numCalls += 1
+    if not n in memo:
+        memo[n] = fib1(n-1) + fib1(n-2)
+    return memo[n]
+memo = {0:0, 1:1}
 
-start_time = time.time()
-for i in test_range:
-    fact0(i)
-end_time = time.time()
-print "Total time to complete fact0(i):", end_time - start_time
+print fib1(25)
+print memo
 
-def fact1(i):
-	"""
-	Takes and int and returns the factorial of that int.
-	Use a while loop.
-	"""
-	
-	assert type(i) == int and i >= 0
-	res = 1
-	while i > 1:
-		res = res * i
-		i -= 1
-	return res
+def msum(a):
+    return max(
+        [
+            (sum(a[j:i]), (j,i)) for i in range(1,len(a)+1) for j in range(i)
+        ]
+    )
 
-start_time = time.time()
-for i in test_range:
-    fact1(i)
-end_time = time.time()
-print "Total time to complete fact1(i):", end_time - start_time
-
-def makeSet(s):
-    """
-    Takes a string and returns a set of the string.  I.e., it removes any duplicates.
-    """
-    assert type(s) == str
-    res = ''
-    for c in s:
-        if not c in res:
-            res = res + c
-    return res
-
-i = 'aklf sfea'
-
-start_time = time.time()
-makeSet(i)
-end_time = time.time()
-print "Total time to complete makeSet(i):", end_time - start_time
-
-def intersect(s1, s2):
-	"""
-	Takes two strings and returns a strings of all the characters that appear in both strings.
-	"""
-	assert type(s1) == str and type(s2) == str
-	s1 = makeSet(s1)
-	s2 = makeSet(s2)
-	res = ''
-	for e in s1:
-		if e in s2:
-			res = res + e
-	return res
-s2 = "missy"
-s1 = "mississipi"
-start_time = time.time()
-print intersect(s1, s2)
-end_time = time.time()
-print "Total time to complete intersect(s1, s2):", end_time - start_time
-
-
-def swap0(s1, s2):
-	assert type(s1) == list and type(s2) == list
-	tmp = s1[:]
-	s1 = s2[:]
-	s2 = tmp
-	return
-
-s1 = [1]
-s2 = [2]
-swap0(s1, s2)
-print s1, s2
+print
+print msum([-9,2,3,4,-5,1,12,-4,6,7,2,3,-34,4,])
 
 
 
+def msum2(a):
+    bounds, s, t, j = (0,0), -float('infinity'), 0, 0
+    print
+    print a
+    
+    for i in range(len(a)):
+        print "i: %i, t:%i, a[i]: %i, j:%s, s:%s, bounds:%s." %(i,t,a[i], j, s, bounds)
+        t = t + a[i]
+        if t > s: bounds, s = (j, i+1), t
+        if t < 0: t, j = 0, i+1
+    return (s, bounds)
 
+print msum2([-9,2,3,4,-5,1,12,-4,6,7,2,3,-34,4,19])
+
+
+def A(w, v, i,j):
+    if i == 0 or j == 0:
+        return 0
+    if w[i-1] > j:
+        return A(w, v, i-1, j)
+    if w[i-1] <= j:
+        return max(A(w,v, i-1, j), v[i-1] + A(w,v, i-1, j - w[i-1]))
