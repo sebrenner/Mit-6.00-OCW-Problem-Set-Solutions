@@ -2,9 +2,9 @@
 #
 # Intelligent Course Advisor
 #
-# Name:
-# Collaborators:
-# Time:
+# Name: Scott Brenner
+# Collaborators: none
+# Time: problem 1: 20 minutes
 #
 
 import time
@@ -31,7 +31,7 @@ def loadSubjects(filename):
     for line in inputFile:
         line = line.strip()
         line_as_list = line.split(',')
-        result[line_as_list[0]] = (int(line_as_list[-2]),int(line_as_list[-1]))    
+        result[line_as_list[0]] = (int(line_as_list[-2]),int(line_as_list[-1])) 
     return result
             
     # TODO: Instead of printing each line, modify the above to parse the name,
@@ -104,6 +104,22 @@ def greedyAdvisor(subjects, maxWork, comparator):
     returns: dictionary mapping subject name to (value, work)
     """
     # TODO...
+	result = {}
+	work_total = 0
+	
+	if comparator == cmpRatio
+		while work_total < maxWork:
+			for each in range(len(subjects)):				cmpRatio(subjects[each],subjects[each-1])
+pass
+	if comparator == cmpRatio
+		pass
+	if comparator == cmpRatio
+		pass
+	return result
+
+
+
+
 
 def bruteForceAdvisor(subjects, maxWork):
     """
