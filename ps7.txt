@@ -50,6 +50,7 @@ def intersect(s1, s2):
 This one depends on makeSet().  If make set is linear then, the complexity of this function depends on the the length of makeSet(s1).  It the set returned by makeSet(s1) is long then the function will take longer to run, but it will only take a little bit longer to run because the for loop will only run one more time for each additional character in the makeSet(s1) set.
 
 5) Present a hand simulation of the code below. Describe the value to which each identifier is bound after each step of the computation. Note that “s1” and “s2” exist in more than one scope.
+
 def swap0(s1, s2):
 	assert type(s1) == list and type(s2) == list
 	tmp = s1[:]
@@ -61,6 +62,13 @@ s2 = [2]
 swap0(s1, s2)
 print s1, s2
 
+before swap0: s1, s1 = [1],[2]
+at end of swap0: s1, s1 = [2],[1]
+out of swap0: s1, s1 = [1],[2]
+
+The global s2 and s2 are not altered by the local s1 and s2 swap.  swap0() only swaps the local s1 and s2.
+
+
 6) Present a hand simulation of the following code:
 def swap1(s1, s2):
 	assert type(s1) == list and type(s2) == list
@@ -69,6 +77,12 @@ s1 = [1]
 s2 = [2]
 s1, s2 = swap1(s1, s2)
 print s1, s2
+
+before swap1: s1, s1 = [1],[2]
+at end of swap0: s1, s1 = [1],[2]
+out of swap0: s1, s1 = [2],[1]
+
+In this snippit swap1() 'swaps' s1 and s2 by merely returning them in reverse order. The real magic is in the assignment operator assigning two variable at the same time.
 
 7) Present a hand simulation of the following code:
 def rev(s):
@@ -80,3 +94,11 @@ def rev(s):
 s =	[1,2,3]
 rev(s)
 print s
+
+before rev s --> [1,2,3,]
+for i
+	tmp 	--> 1
+	s[0] 	--> 3
+	s[-1]	--> 1
+
+@@@@@@@@@ Wait a minute.  Compare result in 7 with result in 5.  Why are these inconsistent.  Is it because there is an assignment operator in 5 that reassigns the variable, while in 7 there the assignment operator is only changing an element of the list?
