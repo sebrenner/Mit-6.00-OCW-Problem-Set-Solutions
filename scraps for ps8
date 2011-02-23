@@ -1,0 +1,74 @@
+#!/usr/bin/env python
+# encoding: utf-8
+"""
+untitled.py
+
+Created by Scott Brenner on 2011-02-23.
+Copyright (c) 2011 Scott Brenner. All rights reserved.
+"""
+
+import sys
+import os
+VALUE, WORK = 0, 1
+
+course_dictionary = {'2.02': (1, 17), '2.03': (6, 1), '2.00': (5, 9), '2.01': (2, 2)}
+course_list = course_dictionary.keys()
+print course_dictionary, course_list
+
+def cmpValue(subInfo1, subInfo2):
+    """
+    Returns True if value in (value, work) tuple subInfo1 is GREATER than
+    value in (value, work) tuple in subInfo2
+    """
+    val1 = subInfo1[VALUE]
+    val2 = subInfo2[VALUE]
+    return  val1 > val2
+
+def cmpWork(subInfo1, subInfo2):
+    """
+    Returns True if work in (value, work) tuple subInfo1 is LESS than than work
+    in (value, work) tuple in subInfo2
+    """
+    work1 = subInfo1[WORK]
+    work2 = subInfo2[WORK]
+    return  work1 < work2
+
+def cmpRatio(subInfo1, subInfo2):
+    """
+    Returns True if value/work in (value, work) tuple subInfo1 is 
+    GREATER than value/work in (value, work) tuple in subInfo2
+    """
+    val1 = subInfo1[VALUE]
+    val2 = subInfo2[VALUE]
+    work1 = subInfo1[WORK]
+    work2 = subInfo2[WORK]
+    return float(val1) / work1 > float(val2) / work2
+
+def sort(l, comparator) :
+        """
+        Sorts the list of subjects' names in descendig order
+        acording to the comparator.
+        """
+        
+        for i in range(1, len(l)) :
+            value = l[i]
+            j = i - 1
+            done = False
+            # print 'i, value, j', i, value, j
+            # print
+            while not done :
+                if comparator(course_dictionary[value], course_dictionary[l[j]]) :
+                    l[j+1] = l[j]
+                    j -= 1
+                    if j < 0 :
+                        done = True
+                else :
+                    done = True
+            l[j+1] = value
+
+print sort(course_list, cmpRatio)
+print 'best by cmpRatio', course_list
+print sort(course_list, cmpWork)
+print 'best by cmpWork', course_list
+print sort(course_list, cmpValue)
+print 'best by cmpValue', course_list

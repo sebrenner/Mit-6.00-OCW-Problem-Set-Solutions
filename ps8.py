@@ -102,45 +102,54 @@ def greedyAdvisor(subjects, maxWork, comparator):
     maxWork: int >= 0
     comparator: function taking two tuples and returning a bool
     returns: dictionary mapping subject name to (value, work)
-    """
-    # testing
-    # print subjects["2.00"]
-    #    print 'testing:', cmpRatio(subjects["2.00"], (0,0))
-    
-    
+    """    
+    print "in Greedy"
+    recommended_schedule = {}
     
     # TODO...
-    result = {}
-    work_total = 0
-    WORK = 1
-    VALUE = 0
-    best_value = (1,1)
-    best_key = ''
-    candidate = ''
-    no_match = False
-    if comparator == "cmpRatio": 
-        while work_total < maxWork and not no_match:
-            for each in subjects:
-                if cmpRatio(subjects[each],best_value):
-                    best_key = each
-                    best_value = subjects[each]
-            if maxWork - work_total <= subjects[best_key][WORK]:
-                work_total += subjects[best_key][WORK]
-                result[best_key] = subjects[best_key]
-            else:
-                break
-        print work_total
-                    
+    #
+    # Build function that sorts based on comparator returns list of subject names sorted by comparator criteria.
+    #
+    def sort(subjects, comparator):
+        """
+        Sorts the list of subjects' names in descendig order acording to the comparator.  Returns a list
+        
+        Arguments:
+        subjects is a dictionary of course titles.
+        comparator is the comparison function to be used.
+        """
+        sorted_schedule = []        #   initialize resulting list.
+        l_subs = subjects.keys()    #   create list from dictionary entries
                 
-                
-                
-                
-    if comparator == cmpRatio:
-      pass
-            
-    if comparator == cmpRatio:
-      pass
-    return result
+        # interate through subject list starting with 1th item comparing it with current best item.  Keep best and move on to next item. 
+        for i in range(1,len(l_subs)):
+            best = l_subs[i]
+            candidate = l_subs[i-1]
+            print "best:", subjects[best]
+            print "candiate:", subjects[candidate]
+            print comparator(subjects[candidate],subjects[best])
+            if comparator(subjects[candidate],subjects[best]):  # if candidate is better that best, make it best.
+                best = candidate
+        print 'best overall:', subjects[best]
+        return sorted_schedule
+    sort(subjects,cmpRatio)
+        
+    
+    
+    #
+    # Pick classes from top of sorted list until maxWork is reached
+    #
+    
+
+
+    
+    # 
+    # Build a ditionary of the selected schedule and return it.
+    # 
+
+
+
+    return recommended_schedule    
 
 def bruteForceAdvisor(subjects, maxWork):
     """
@@ -230,6 +239,8 @@ def dpTime():
 # TODO: write here your observations regarding dpAdvisor's performance and
 # how its performance compares to that of bruteForceAdvisor.
 
-loadSubjects(SUBJECT_FILENAME)
+subjects = loadSubjects(SUBJECT_FILENAME)
+print loadSubjects(SUBJECT_FILENAME)
+print "Course Catalog"
 printSubjects(loadSubjects(SUBJECT_FILENAME))
-print greedyAdvisor(loadSubjects(SUBJECT_FILENAME), 15, "cmpRatio")
+print greedyAdvisor(loadSubjects(SUBJECT_FILENAME), 15, "cmpWork")
