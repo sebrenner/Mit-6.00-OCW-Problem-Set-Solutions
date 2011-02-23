@@ -3,7 +3,7 @@
 # Intelligent Course Advisor
 #
 # Name: Scott Brenner
-# Collaborators: none
+# Collaborators: http://openstudy.com/studypads/Problem-Set-8-4c6bf092e6153a7f05c12e1e
 # Time: problem 1: 20 minutes
 #
 
@@ -97,36 +97,57 @@ def greedyAdvisor(subjects, maxWork, comparator):
     subjects selected by the algorithm, such that the total work of subjects in
     the dictionary is not greater than maxWork.  The subjects are chosen using
     a greedy algorithm.  The subjects dictionary should not be mutated.
-
+    
     subjects: dictionary mapping subject name to (value, work)
     maxWork: int >= 0
     comparator: function taking two tuples and returning a bool
     returns: dictionary mapping subject name to (value, work)
     """
+    # testing
+    # print subjects["2.00"]
+    #    print 'testing:', cmpRatio(subjects["2.00"], (0,0))
+    
+    
+    
     # TODO...
-	result = {}
-	work_total = 0
-	
-	if comparator == cmpRatio
-		while work_total < maxWork:
-			for each in range(len(subjects)):				cmpRatio(subjects[each],subjects[each-1])
-pass
-	if comparator == cmpRatio
-		pass
-	if comparator == cmpRatio
-		pass
-	return result
-
-
-
-
+    result = {}
+    work_total = 0
+    WORK = 1
+    VALUE = 0
+    best_value = (1,1)
+    best_key = ''
+    candidate = ''
+    no_match = False
+    if comparator == "cmpRatio": 
+        while work_total < maxWork and not no_match:
+            for each in subjects:
+                if cmpRatio(subjects[each],best_value):
+                    best_key = each
+                    best_value = subjects[each]
+            if maxWork - work_total <= subjects[best_key][WORK]:
+                work_total += subjects[best_key][WORK]
+                result[best_key] = subjects[best_key]
+            else:
+                break
+        print work_total
+                    
+                
+                
+                
+                
+    if comparator == cmpRatio:
+      pass
+            
+    if comparator == cmpRatio:
+      pass
+    return result
 
 def bruteForceAdvisor(subjects, maxWork):
     """
     Returns a dictionary mapping subject name to (value, work), which
     represents the globally optimal selection of subjects using a brute force
     algorithm.
-
+    
     subjects: dictionary mapping subject name to (value, work)
     maxWork: int >= 0
     returns: dictionary mapping subject name to (value, work)
@@ -140,8 +161,7 @@ def bruteForceAdvisor(subjects, maxWork):
         outputSubjects[nameList[i]] = tupleList[i]
     return outputSubjects
 
-def bruteForceAdvisorHelper(subjects, maxWork, i, bestSubset, bestSubsetValue,
-                            subset, subsetValue, subsetWork):
+def bruteForceAdvisorHelper(subjects, maxWork, i, bestSubset, bestSubsetValue, subset, subsetValue, subsetWork):
     # Hit the end of the list.
     if i >= len(subjects):
         if bestSubset == None or subsetValue > bestSubsetValue:
@@ -167,6 +187,7 @@ def bruteForceAdvisorHelper(subjects, maxWork, i, bestSubset, bestSubsetValue,
 #
 # Problem 3: Subject Selection By Brute Force
 #
+
 def bruteForceTime():
     """
     Runs tests on bruteForceAdvisor and measures the time required to compute
@@ -211,3 +232,4 @@ def dpTime():
 
 loadSubjects(SUBJECT_FILENAME)
 printSubjects(loadSubjects(SUBJECT_FILENAME))
+print greedyAdvisor(loadSubjects(SUBJECT_FILENAME), 15, "cmpRatio")
