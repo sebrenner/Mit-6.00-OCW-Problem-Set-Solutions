@@ -112,6 +112,9 @@ def greedyAdvisor(subjects, maxWork, comparator):
         Sorts the list of subjects' names in descendig order
         acording to the comparator.
         """
+        # print "l, comparator type:", type(l), type(comparator)
+        # print 
+        
         for i in range(1, len(l)) :
             value = l[i]
             j = i - 1
@@ -119,7 +122,9 @@ def greedyAdvisor(subjects, maxWork, comparator):
             # print 'i, value, j', i, value, j
             # print
             while not done:
-                if comparator(subjects[value], subjects[l[j]]) :
+                # print "subjects[value], subjects[l[j]] type:", type(subjects[value]), type(subjects[l[j]])
+                # print
+                if comparator(subjects[value], subjects[l[j]]):
                     l[j+1] = l[j]
                     j -= 1
                     if j < 0 :
@@ -234,4 +239,7 @@ subjects = loadSubjects(SUBJECT_FILENAME)
 #print subjects
 #print "Course Catalog"
 #printSubjects(loadSubjects(SUBJECT_FILENAME))
-print 'greedy:', greedyAdvisor(loadSubjects(SUBJECT_FILENAME), 15, "cmpWork")
+
+print 'greedy(cmpValue) {6:00, 15.01}:', greedyAdvisor(loadSubjects(SUBJECT_FILENAME), 15, cmpValue)
+print 'greedy(cmpWork) {6:00, 15.01}:', greedyAdvisor(loadSubjects(SUBJECT_FILENAME), 15, cmpWork)
+print 'greedy(cmpRatio) {6:00,6.01}:', greedyAdvisor(loadSubjects(SUBJECT_FILENAME), 15, cmpRatio)
