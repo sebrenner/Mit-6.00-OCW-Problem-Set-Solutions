@@ -10,7 +10,8 @@
 import time
 import string
 
-SUBJECT_FILENAME = "my_subjects.txt"
+# SUBJECT_FILENAME = "my_subjects.txt"
+SUBJECT_FILENAME = "subjects.txt"
 VALUE, WORK = 0, 1
 
 #
@@ -139,8 +140,8 @@ def greedyAdvisor(subjects, maxWork, comparator):
     #print 'schedule_list unsorted: ', schedule_list
     #print
     sort(schedule_list, comparator)
-    print 'schedule_list sorted: ', schedule_list
-    print
+    # print 'schedule_list sorted: ', schedule_list
+    #     print
     recommended_schedule = {}
     courseLoad = 0
     done = False
@@ -241,8 +242,13 @@ def dpTime():
 subjects = loadSubjects(SUBJECT_FILENAME)
 #print subjects
 #print "Course Catalog"
-printSubjects(loadSubjects(SUBJECT_FILENAME))
+#printSubjects(loadSubjects(SUBJECT_FILENAME))
 
-print '\n\ngreedy(cmpValue) {6:00, 15.01}:\n', greedyAdvisor(loadSubjects(SUBJECT_FILENAME), 15, cmpValue)
-print '\n\ngreedy(cmpWork) {6:01, 15.01}:\n', greedyAdvisor(loadSubjects(SUBJECT_FILENAME), 15, cmpWork)
-print '\n\ngreedy(cmpRatio) {6:00,6.01}:\n', greedyAdvisor(loadSubjects(SUBJECT_FILENAME), 15, cmpRatio)
+print 'greedy(cmpValue):'
+printSubjects(greedyAdvisor(subjects, 15, cmpValue))
+
+print '\ngreedy(cmpWork):'
+printSubjects(greedyAdvisor(subjects, 15, cmpWork))
+
+print '\ngreedy(cmpRatio)'
+printSubjects(greedyAdvisor(subjects, 15, cmpRatio))
