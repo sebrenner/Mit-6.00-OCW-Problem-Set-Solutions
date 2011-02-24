@@ -136,12 +136,13 @@ def greedyAdvisor(subjects, maxWork, comparator):
     # Pick classes from top of sorted list until maxWork is reached
     #
     schedule_list = subjects.keys()
-    print schedule_list
+    #print 'schedule_list unsorted: ', schedule_list
     sort(schedule_list, comparator)
+    #print 'schedule_list sorted: ', schedule_list
     recommended_schedule = {}
     courseLoad = 0
     done = False
-    for course in subjects:
+    for course in schedule_list:
         if subjects[course][1] <= maxWork - courseLoad:
             recommended_schedule[course] = subjects[course]
             courseLoad += subjects[course][1]
