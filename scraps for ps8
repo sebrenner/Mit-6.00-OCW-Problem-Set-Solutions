@@ -13,8 +13,8 @@ VALUE, WORK = 0, 1
 
 course_dictionary = {'2.02': (1, 17), '2.03': (6, 1), '2.00': (5, 9), '2.01': (2, 2)}
 course_list = course_dictionary.keys()
-print course_dictionary, course_list
-
+print course_dictionary
+print course_list
 def cmpValue(subInfo1, subInfo2):
     """
     Returns True if value in (value, work) tuple subInfo1 is GREATER than

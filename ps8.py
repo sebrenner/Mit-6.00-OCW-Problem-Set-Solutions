@@ -103,53 +103,44 @@ def greedyAdvisor(subjects, maxWork, comparator):
     comparator: function taking two tuples and returning a bool
     returns: dictionary mapping subject name to (value, work)
     """    
-    print "in Greedy"
-    recommended_schedule = {}
-    
     # TODO...
     #
     # Build function that sorts based on comparator returns list of subject names sorted by comparator criteria.
     #
-    def sort(subjects, comparator):
+    def sort(l, comparator) :
         """
-        Sorts the list of subjects' names in descendig order acording to the comparator.  Returns a list
-        
-        Arguments:
-        subjects is a dictionary of course titles.
-        comparator is the comparison function to be used.
+        Sorts the list of subjects' names in descendig order
+        acording to the comparator.
         """
-        sorted_schedule = []        #   initialize resulting list.
-        l_subs = subjects.keys()    #   create list from dictionary entries
-                
-        # interate through subject list starting with 1th item comparing it with current best item.  Keep best and move on to next item. 
-        for i in range(1,len(l_subs)):
-            best = l_subs[i]
-            candidate = l_subs[i-1]
-            print "best:", subjects[best]
-            print "candiate:", subjects[candidate]
-            print comparator(subjects[candidate],subjects[best])
-            if comparator(subjects[candidate],subjects[best]):  # if candidate is better that best, make it best.
-                best = candidate
-        print 'best overall:', subjects[best]
-        return sorted_schedule
-    sort(subjects,cmpRatio)
-        
-    
-    
+        for i in range(1, len(l)) :
+            value = l[i]
+            j = i - 1
+            done = False
+            # print 'i, value, j', i, value, j
+            # print
+            while not done:
+                if comparator(subjects[value], subjects[l[j]]) :
+                    l[j+1] = l[j]
+                    j -= 1
+                    if j < 0 :
+                        done = True
+                else :
+                    done = True
+            l[j+1] = value
     #
     # Pick classes from top of sorted list until maxWork is reached
     #
-    
-
-
-    
-    # 
-    # Build a ditionary of the selected schedule and return it.
-    # 
-
-
-
-    return recommended_schedule    
+    schedule_list = subjects.keys()
+    print schedule_list
+    sort(schedule_list, comparator)
+    recommended_schedule = {}
+    courseLoad = 0
+    done = False
+    for course in subjects:
+        if subjects[course][1] <= maxWork - courseLoad:
+            recommended_schedule[course] = subjects[course]
+            courseLoad += subjects[course][1]
+    return recommended_schedule
 
 def bruteForceAdvisor(subjects, maxWork):
     """
@@ -240,7 +231,7 @@ def dpTime():
 # how its performance compares to that of bruteForceAdvisor.
 
 subjects = loadSubjects(SUBJECT_FILENAME)
-print loadSubjects(SUBJECT_FILENAME)
-print "Course Catalog"
-printSubjects(loadSubjects(SUBJECT_FILENAME))
-print greedyAdvisor(loadSubjects(SUBJECT_FILENAME), 15, "cmpWork")
+#print subjects
+#print "Course Catalog"
+#printSubjects(loadSubjects(SUBJECT_FILENAME))
+print 'greedy:', greedyAdvisor(loadSubjects(SUBJECT_FILENAME), 15, "cmpWork")
