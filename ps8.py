@@ -137,8 +137,10 @@ def greedyAdvisor(subjects, maxWork, comparator):
     #
     schedule_list = subjects.keys()
     #print 'schedule_list unsorted: ', schedule_list
+    #print
     sort(schedule_list, comparator)
-    #print 'schedule_list sorted: ', schedule_list
+    print 'schedule_list sorted: ', schedule_list
+    print
     recommended_schedule = {}
     courseLoad = 0
     done = False
@@ -239,8 +241,8 @@ def dpTime():
 subjects = loadSubjects(SUBJECT_FILENAME)
 #print subjects
 #print "Course Catalog"
-#printSubjects(loadSubjects(SUBJECT_FILENAME))
+printSubjects(loadSubjects(SUBJECT_FILENAME))
 
-print 'greedy(cmpValue) {6:00, 15.01}:', greedyAdvisor(loadSubjects(SUBJECT_FILENAME), 15, cmpValue)
-print 'greedy(cmpWork) {6:00, 15.01}:', greedyAdvisor(loadSubjects(SUBJECT_FILENAME), 15, cmpWork)
-print 'greedy(cmpRatio) {6:00,6.01}:', greedyAdvisor(loadSubjects(SUBJECT_FILENAME), 15, cmpRatio)
+print '\n\ngreedy(cmpValue) {6:00, 15.01}:\n', greedyAdvisor(loadSubjects(SUBJECT_FILENAME), 15, cmpValue)
+print '\n\ngreedy(cmpWork) {6:01, 15.01}:\n', greedyAdvisor(loadSubjects(SUBJECT_FILENAME), 15, cmpWork)
+print '\n\ngreedy(cmpRatio) {6:00,6.01}:\n', greedyAdvisor(loadSubjects(SUBJECT_FILENAME), 15, cmpRatio)
