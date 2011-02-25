@@ -161,19 +161,7 @@ def bruteForceAdvisor(subjects, maxWork):
         
     subjects: dictionary mapping subject name to (value, work)
     maxWork: int >= 0
-    returns: dictionary mapping subject name to (value, work)
-    
-    # This functions is very slow for very large sets of data.
-    # For a maxLoad of  2: 0.01 seconds
-                            # 4: 0.22
-                            # 6: 1.76
-                            # 7: 3.70
-                            # 8: 11.42
-                            # 9: 27.57
-        # Unreasonable depends on a multiple  factors, including the importance of the results and the quality of the results of a faster, less optimal function.  In this case the greedy function probably produces results that nearly as good as the results of the brute force method.
-    #  Considering MIT costs ~$200k in tuition and room and board.  Perhaps a few minutes to optimize a semester course load is worth it. 
-    
-    
+    returns: dictionary mapping subject name to (value, work) 
     """
     nameList = subjects.keys()
     tupleList = subjects.values()
@@ -183,7 +171,7 @@ def bruteForceAdvisor(subjects, maxWork):
     for i in bestSubset:
         outputSubjects[nameList[i]] = tupleList[i]
     return outputSubjects
-
+counter = 0
 def bruteForceAdvisorHelper(subjects, maxWork, i, bestSubset, bestSubsetValue, subset, subsetValue, subsetWork):
     # Hit the end of the list.
     if i >= len(subjects):
@@ -217,11 +205,35 @@ def bruteForceTime():
     an answer.
     """
     # TODO...
+    trial_work = [14]
+    total_times = {}
+    for each in trial_work:
+        start_time = time.time()
+        print bruteForceAdvisor(subjects,each)
+        end_time = time.time()
+        total_times[each] = round(end_time - start_time, 2)
+    print total_times
 
 # Problem 3 Observations
 # ======================
 #
 # TODO: write here your observations regarding bruteForceTime's performance
+# Th brute force function is very slow for even moderately large course loads.
+   # For a maxLoad of  2: 0.01 seconds
+                           # 4: 0.22
+                           # 6: 1.76
+                           # 7: 3.70
+                           # 8: 11.42
+                           # 9: 27.57
+                           # 10: 122.58
+                           # 11: 354.55
+                           # 12: 778.29
+                           # 13: 1714.95
+                           # 14: 2907.09
+       # Unreasonable depends on a multiple  factors, including the importance of the results and the quality of the results of a faster, less optimal function.  In this case the greedy function probably produces results that nearly as good as the results of the brute force method.
+   #  Considering MIT costs ~$200k in tuition and room and board.  Perhaps a few minutes to optimize a semester course load is worth it. 
+   
+
 
 #
 # Problem 4: Subject Selection By Dynamic Programming
@@ -246,7 +258,7 @@ def dpAdvisor(subjects, maxWork):
         
         Returns a list of tuples that represent each dictionary entry sorted by value.
         
-        subjects:  subjects: dictionary mapping subject name to (value, work)
+        subjects: dictionary mapping subject name to (value, work)
         sort_key: an int that represents the index of the tuple by which the list should be sorted, e.g., if sort_key = 1, then list will be sorted by work.
         hi_low: a boolean.  If true the list will be sorted high to low, otherwise it will be sorted low to high
         returns: list of subjects sorted by sort_key, ordered by hi_low
@@ -254,17 +266,10 @@ def dpAdvisor(subjects, maxWork):
         """
         result = []
         items = subjects.items()
-        items = [(v, k) for (k, v) in items]
-        items = sorted(items, key=lambda items: items[0][sort_key])
-        if hi_low:
-            items.reverse()		# so largest is first
-        items = [(k, v) for (v, k) in items]
-        for i in range(len(items)):
-            result.append(items[i][0])
+        items = sorted(items, key=lambda items: items[1][sort_key], reverse=hi_low)
+        for i in items:
+            result.append(i[0])
         return result
-    
-    #print 'Sorted by work', sort(subjects,1,False)
-    #print 'Sorted by value', sort(subjects,0,True)
     
     workLoad = 0
     sortedSubjects = sort(subjects,0,True)
@@ -316,14 +321,6 @@ subjects = loadSubjects(SUBJECT_FILENAME)
 
 # printSubjects(bruteForceAdvisor(subjects,15))
 # 
-trials = [15]
-total_times = {}
-for each in trials:
-    start_time = time.time()
-    #printSubjects(greedyAdvisor(subjects, 15, cmpRatio))
-    bruteForceAdvisor(subjects,each)
-    end_time = time.time()
-    total_times[each] = round(end_time - start_time, 2)
-print total_times
+bruteForceTime()
 
 #print dpAdvisor(subjects, 15)

@@ -1,0 +1,11 @@
+PS8: Further improved the sort function in Problem 4.  But I have not been able to make any head way on Problem 4.  I don't even think that the sort function will be useful.
+
+Nor can I figure out what calculations should be memoized.  I think the crux of the problem is creating all the possible combinations of classes that fit within the maxLoad.  Once all those combos are created, it is trivial to sort them by their value.
+
+I considered whether memoizeing the combinations based on smaller sets would work.  For example could all combos of workload 5 be created by combining the sets of workload 2 with workload 3.  This doesn't seem likely to work because some classes have workloads that exceed 3 but are less than five.  To be that once you have all the combos for length 3, just adding all the classes of length 1, doesn't get you to length 4, you have to also add all the classes of length 4.
+
+It seems that have some knowledge of the subject data set could make the problem easier for example no classes with individual work loads that exceed maxwork need to be included.  Paring the subjects for a maxload of 15 reduces the subjects list from 320 to 232.		
+
+There also seems to a problem or opportunity related to classes with the same (value, workload).  This reminds me of the word problem solution that took advantage of the fact that taco and coat have the same letters and therefore the same score.
+
+On top of all this the solution can't include more than one instance of each class.
