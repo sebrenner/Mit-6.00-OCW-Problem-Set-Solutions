@@ -9,8 +9,9 @@
 
 import time
 import string
+from operator import itemgetter, attrgetter
 
-# SUBJECT_FILENAME = "my_subjects.txt"
+#SUBJECT_FILENAME = "my_subjects.txt"
 SUBJECT_FILENAME = "subjects.txt"
 VALUE, WORK = 0, 1
 
@@ -151,15 +152,28 @@ def greedyAdvisor(subjects, maxWork, comparator):
             courseLoad += subjects[course][1]
     return recommended_schedule
 
+
 def bruteForceAdvisor(subjects, maxWork):
     """
     Returns a dictionary mapping subject name to (value, work), which
     represents the globally optimal selection of subjects using a brute force
     algorithm.
-    
+        
     subjects: dictionary mapping subject name to (value, work)
     maxWork: int >= 0
     returns: dictionary mapping subject name to (value, work)
+    
+    # This functions is very slow for very large sets of data.
+    # For a maxLoad of  2: 0.01 seconds
+                            # 4: 0.22
+                            # 6: 1.76
+                            # 7: 3.70
+                            # 8: 11.42
+                            # 9: 27.57
+        # Unreasonable depends on a multiple  factors, including the importance of the results and the quality of the results of a faster, less optimal function.  In this case the greedy function probably produces results that nearly as good as the results of the brute force method.
+    #  Considering MIT costs ~$200k in tuition and room and board.  Perhaps a few minutes to optimize a semester course load is worth it. 
+    
+    
     """
     nameList = subjects.keys()
     tupleList = subjects.values()
@@ -216,12 +230,59 @@ def dpAdvisor(subjects, maxWork):
     """
     Returns a dictionary mapping subject name to (value, work) that contains a
     set of subjects that provides the maximum value without exceeding maxWork.
-
+    
     subjects: dictionary mapping subject name to (value, work)
     maxWork: int >= 0
     returns: dictionary mapping subject name to (value, work)
     """
     # TODO...
+    
+    def sort(subjects,sort_key,hi_low):
+        """
+        Takes a dictionary converts it to a list;
+        swaps the key for the value;
+        sorts by the value (high to low);
+        then swaps value and key again.
+        
+        Returns a list of tuples that represent each dictionary entry sorted by value.
+        
+        subjects:  subjects: dictionary mapping subject name to (value, work)
+        sort_key: an int that represents the index of the tuple by which the list should be sorted, e.g., if sort_key = 1, then list will be sorted by work.
+        hi_low: a boolean.  If true the list will be sorted high to low, otherwise it will be sorted low to high
+        returns: list of subjects sorted by sort_key, ordered by hi_low
+        
+        """
+        result = []
+        items = subjects.items()
+        items = [(v, k) for (k, v) in items]
+        items = sorted(items, key=lambda items: items[0][sort_key])
+        if hi_low:
+            items.reverse()		# so largest is first
+        items = [(k, v) for (v, k) in items]
+        for i in range(len(items)):
+            result.append(items[i][0])
+        return result
+    
+    #print 'Sorted by work', sort(subjects,1,False)
+    #print 'Sorted by value', sort(subjects,0,True)
+    
+    workLoad = 0
+    sortedSubjects = sort(subjects,0,True)
+    rec_list = []
+    rec_dict = {}
+    
+    done = True
+    #while done:
+    for i in range(10):
+        for each in sortedSubjects:
+            if subjects[each][1] <= maxWork - workLoad:
+                rec_list.append(each)
+                workLoad += subjects[each][1]
+        if workLoad == maxWork: done = False
+    
+    for each in rec_list:
+        rec_dict[each] = subjects[each]
+    return rec_dict
 
 #
 # Problem 5: Performance Comparison
@@ -244,11 +305,25 @@ subjects = loadSubjects(SUBJECT_FILENAME)
 #print "Course Catalog"
 #printSubjects(loadSubjects(SUBJECT_FILENAME))
 
-print 'greedy(cmpValue):'
-printSubjects(greedyAdvisor(subjects, 15, cmpValue))
+# print 'greedy(cmpValue):'
+# printSubjects(greedyAdvisor(subjects, 15, cmpValue))
+# 
+# print '\ngreedy(cmpWork):'
+# printSubjects(greedyAdvisor(subjects, 15, cmpWork))
+# 
+# print '\ngreedy(cmpRatio)'
+# printSubjects(greedyAdvisor(subjects, 15, cmpRatio))
 
-print '\ngreedy(cmpWork):'
-printSubjects(greedyAdvisor(subjects, 15, cmpWork))
+# printSubjects(bruteForceAdvisor(subjects,15))
+# 
+trials = [15]
+total_times = {}
+for each in trials:
+    start_time = time.time()
+    #printSubjects(greedyAdvisor(subjects, 15, cmpRatio))
+    bruteForceAdvisor(subjects,each)
+    end_time = time.time()
+    total_times[each] = round(end_time - start_time, 2)
+print total_times
 
-print '\ngreedy(cmpRatio)'
-printSubjects(greedyAdvisor(subjects, 15, cmpRatio))
+#print dpAdvisor(subjects, 15)
