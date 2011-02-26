@@ -205,7 +205,7 @@ def bruteForceTime():
     an answer.
     """
     # TODO...
-    trial_work = [14]
+    trial_work = [15]
     total_times = {}
     for each in trial_work:
         start_time = time.time()
@@ -230,6 +230,7 @@ def bruteForceTime():
                            # 12: 778.29
                            # 13: 1714.95
                            # 14: 2907.09
+                           # 14: 2850.40
        # Unreasonable depends on a multiple  factors, including the importance of the results and the quality of the results of a faster, less optimal function.  In this case the greedy function probably produces results that nearly as good as the results of the brute force method.
    #  Considering MIT costs ~$200k in tuition and room and board.  Perhaps a few minutes to optimize a semester course load is worth it. 
    

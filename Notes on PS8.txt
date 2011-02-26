@@ -9,3 +9,11 @@ It seems that have some knowledge of the subject data set could make the problem
 There also seems to a problem or opportunity related to classes with the same (value, workload).  This reminds me of the word problem solution that took advantage of the fact that taco and coat have the same letters and therefore the same score.
 
 On top of all this the solution can't include more than one instance of each class.
+
+
+******* Walkthrough of study pad code *******
+dpAd keeps calling itself stepping backward through the list until it find the second item of the list.  Then it begins building the memo 
+
+
+
+1. call dpAdvisorHelper([valueWorkList], 8, 5, {}) --->

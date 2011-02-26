@@ -12,7 +12,9 @@
 
 import time
 
-SUBJECT_FILENAME = "subjects.txt"
+SUBJECT_FILENAME = "my_subjects.txt"
+#SUBJECT_FILENAME = "subjects.txt"
+
 VALUE, WORK = 0, 1
 
 #
@@ -27,24 +29,16 @@ def loadSubjects(filename):
     
     returns: dictionary mapping subject name to (value, work)
     """
-    
-    subjects = {}
-    
-    # The following sample code reads lines from the specified file and prints
-    # each one.
+    result = {}
     inputFile = open(filename)
+    
     for line in inputFile:
-        line = line.strip('\n')
-        splitted = line.split(',')
-        subjects[splitted[0]] = (int(splitted[1]), int(splitted[2]))
-        
-    # TODO: Instead of printing each line, modify the above to parse the name,
-    # value, and work of each subject and create a dictionary mapping the name
-    # to the (value, work).
-    
-    return
+        line = line.strip()
+        line_as_list = line.split(',')
+        result[line_as_list[0]] = (int(line_as_list[-2]),int(line_as_list[-1])) 
+    return result
 
-    
+
 def printSubjects(subjects):
     """
     Prints a string containing name, value, and work of each subject in
@@ -66,90 +60,6 @@ def printSubjects(subjects):
     res = res + 'Total Work:\t' + str(totalWork) + '\n'
     print res
 
-def cmpValue(subInfo1, subInfo2):
-    """
-    Returns True if value in (value, work) tuple subInfo1 is GREATER than
-    value in (value, work) tuple in subInfo2
-    """
-    val1 = subInfo1[VALUE]
-    val2 = subInfo2[VALUE]
-    return  val1 > val2
-
-def cmpWork(subInfo1, subInfo2):
-    """
-    Returns True if work in (value, work) tuple subInfo1 is LESS than than work
-    in (value, work) tuple in subInfo2
-    """
-    work1 = subInfo1[WORK]
-    work2 = subInfo2[WORK]
-    return  work1 < work2
-
-def cmpRatio(subInfo1, subInfo2):
-    """
-    Returns True if value/work in (value, work) tuple subInfo1 is 
-    GREATER than value/work in (value, work) tuple in subInfo2
-    """
-    val1 = subInfo1[VALUE]
-    val2 = subInfo2[VALUE]
-    work1 = subInfo1[WORK]
-    work2 = subInfo2[WORK]
-    return float(val1) / work1 > float(val2) / work2
-
-#
-# Problem 2: Subject Selection By Greedy Optimization
-#
-def greedyAdvisor(subjects, maxWork, comparator):
-    """
-    Returns a dictionary mapping subject name to (value, work) which includes
-    subjects selected by the algorithm, such that the total work of subjects in
-    the dictionary is not greater than maxWork.  The subjects are chosen using
-    a greedy algorithm.  The subjects dictionary should not be mutated.
-    
-    subjects: dictionary mapping subject name to (value, work)
-    maxWork: int >= 0
-    comparator: function taking two tuples and returning a bool
-    returns: dictionary mapping subject name to (value, work)
-    """
-    # TODO...
-    
-    def sort(l, comparator) :
-        """
-        Sorts the list of subjects' names in descendig order
-        acording to the comparator.
-        """
-        
-        for i in range(1, len(l)) :
-            value = l[i]
-            j = i - 1
-            done = False
-            while not done :
-                if comparator(subjects[value], subjects[l[j]]) :
-                    l[j+1] = l[j]
-                    j -= 1
-                    if j < 0 :
-                        done = True
-                else :
-                    done = True
-            l[j+1] = value
-    
-    advise = {}
-    advisedNames = []
-    subjectNameList = subjects.keys()
-    sort(subjectNameList, comparator)
-    for sub in subjectNameList :
-        currentWorkload = subjects[sub][1]
-        maxWork -= currentWorkload
-        if maxWork >= 0 :
-            advisedNames.append(sub)
-        else :
-            break
-    
-    advisedNames.sort()#why sort? I mean what for? Should this make a difference?
-    for sub in advisedNames :
-        advise[sub] = subjects[sub]
-    return advise
-
-
 def bruteForceAdvisor(subjects, maxWork):
     """
     Returns a dictionary mapping subject name to (value, work), which
@@ -168,7 +78,6 @@ def bruteForceAdvisor(subjects, maxWork):
     for i in bestSubset:
         outputSubjects[nameList[i]] = tupleList[i]
     return outputSubjects
-
 
 def bruteForceAdvisorHelper(subjects, maxWork, i, bestSubset, bestSubsetValue, subset, subsetValue, subsetWork):
     # Hit the end of the list.
@@ -193,42 +102,6 @@ def bruteForceAdvisorHelper(subjects, maxWork, i, bestSubset, bestSubsetValue, s
                 subsetValue, subsetWork)
         return bestSubset, bestSubsetValue
 
-
-
-#
-# Problem 3: Subject Selection By Brute Force
-#
-def bruteForceTime():
-    """
-    Runs tests on bruteForceAdvisor and measures the time required to compute
-    an answer.
-    """
-    
-    subjects = loadSubjects('subjects.txt')
-    maxWork = 1
-    cont = True
-    while cont :
-        print "Deciding for a maximum workload of", maxWork
-        startTime = time.time()
-        selected = bruteForceAdvisor(subjects, maxWork)
-        endTime = time.time()
-        printSubjects(selected)
-        print "it took", endTime - startTime, "seconds for the brute force advisor to select the subjects."
-        ans = raw_input("press enter to continue or any key to exit: ")
-        if not ans == '' :
-            break
-        maxWork += 1
-
-# Problem 3 Observations
-# ======================
-#
-# TODO: write here your observations regarding bruteForceTime's performance
-# for a subjects list as bigger as the provided one and a workload of 12 it
-# takes almost 7 minutes to compute the solution
-
-#
-# Problem 4: Subject Selection By Dynamic Programming
-#
 def dpAdvisor(subjects, maxWork):
     """
     Returns a dictionary mapping subject name to (value, work) that contains a
@@ -269,6 +142,11 @@ def dpAdvisorHelper(valueWorkList, i, aWork, memo) :
     """
     
     ##trying to make use of already computed values
+    # print '\nIn dpAdvisorHelper.'   ,'\nvalueWorkList', valueWorkList
+    print 'i:', i,
+    print 'a:', aWork,
+    print 'v[i]', valueWorkList[i],
+    print '\tmemo:', memo
     try : return memo[(i, aWork)]
     except KeyError :
         ith_value = valueWorkList[i][VALUE]
@@ -283,8 +161,7 @@ def dpAdvisorHelper(valueWorkList, i, aWork, memo) :
             else : ##unable to take the first element
                 selectedIndexes = []
                 memo[(i, aWork)] = 0, selectedIndexes
-                return 0, selectedIndexes
-                
+                return 0, selectedIndexes        
         ##somewhere in the middle of the decision tree,
         ##computing value without the i-th element
         without_i, selectedIndexes =\
@@ -371,8 +248,7 @@ def dpAdvisorHelper(valueWorkList, i, aWork, memo) :
 # being slightly slower than the algorithm above, but still faster than the brute
 # force method   
     
-
- availableWork = maxWork - subsetWork
+    availableWork = maxWork - subsetWork
     
     try:
         if (memo[(i, availableWork)][1] > subsetValue):
@@ -407,121 +283,21 @@ def dpAdvisorHelper(valueWorkList, i, aWork, memo) :
         return bestSubset, bestSubsetValue
 
 
-#
-# Problem 5: Performance Comparison
-#
 def dpTime():
     """
     Runs tests on dpAdvisor and measures the time required to compute an
     answer.
     """
     # TODO...
-    subjects = loadSubjects('subjects.txt')
-    for maxWork in range(0, 1001, 10) :
-        print "maximum workload", maxWork, ':',
+    subjects = loadSubjects(SUBJECT_FILENAME)
+    # print "subjects:", subjects
+    test_maxWork = [4]
+    for each in test_maxWork:
+        print "maximum workload", each, '\n',
         startTime = time.time()
-        selected = dpAdvisor(subjects, maxWork)
+        selected = dpAdvisor(subjects, each)
         endTime = time.time()
         print endTime - startTime, "seconds."
+        printSubjects(selected)
 
-
-# Problem 5 Observations
-# ======================
-#
-# TODO: write here your observations regarding dpAdvisor's performance and
-# how its performance compares to that of bruteForceAdvisor.
-# mavaffanculo, va'!
-
-# Here's an alternative solution to the greedy algorithm problem
-def greedyAdvisor_alternate(subjects, maxWork, comparator):
-    """
-    Returns a dictionary mapping subject name to (value, work) which includes
-    subjects selected by the algorithm, such that the total work of subjects in
-    the dictionary is not greater than maxWork.  The subjects are chosen using
-    a greedy algorithm.  The subjects dictionary should not be mutated.
-    
-    subjects: dictionary mapping subject name to (value, work)
-    maxWork: int >= 0
-    comparator: function taking two tuples and returning a bool
-    returns: dictionary mapping subject name to (value, work)
-    """
-    
-    # Define local variables        
-    totalWork = 0
-    subDict = {}
-    nameList = subjects.keys()
-    tupleList = subjects.values()
-    
-    while totalWork <= maxWork:
-        foundStartingPoint = False
-        for i in range(len(subjects)):
-            if i == 0: # If at the beginning of the list, find a suitable starting point
-                for i in range(len(subjects)):
-                    if nameList[i] not in subDict and tupleList[i][WORK] + totalWork <= maxWork:
-                        foundStartingPoint = True
-                        bestSubject = i
-                        break
-            if foundStartingPoint: # If there is a value to test
-                # Find the best subject according to the comparator, allowed work, and presence in the subDict
-                if nameList[i] not in subDict and tupleList[i][WORK] + totalWork <= maxWork and comparator(tupleList[i], tupleList[bestSubject]):
-                    bestSubject = i
-        # Add the best subject to the subject dictionary if there were any found
-        if foundStartingPoint:
-            subDict[nameList[bestSubject]] = tupleList[bestSubject]
-            totalWork += tupleList[bestSubject][WORK]
-        # break out of the loop if there are no possible subjects
-        else:
-            break
-    return subDict
-
-
-
-# Just because I'm insane, here's yet another way to solve for the greedy algorithm, this solution requires the itemgetter from the operator module
-def greedyAdvisor_alternate2(subjects, maxWork, comparator):
-    """
-    Returns a dictionary mapping subject name to (value, work) which includes
-    subjects selected by the algorithm, such that the total work of subjects in
-    the dictionary is not greater than maxWork.  The subjects are chosen using
-    a greedy algorithm.  The subjects dictionary should not be mutated.
-    
-    subjects: dictionary mapping subject name to (value, work)
-    maxWork: int >= 0
-    comparator: function taking two tuples and returning a bool
-    returns: dictionary mapping subject name to (value, work)
-    """
-    def comparatorComparison(x, y):
-        """
-        Takes two tuples, and compares them, returning 1 if the comparator
-        function returns true, -1 if it returns false, and 0 if it returns
-        neither. It really shouldn't return 0, but it's there for code
-        completeness.
-        
-        x, y: tuples containing two integers >= 0        
-        """
-        if comparator(x, y):
-            return 1
-        elif not comparator(x, y):
-            return -1
-        else:
-            return 0
-    
-    # Create a list out of the subject dictionary
-    subjectList = []
-    for key in subjects:
-        subjectList.append((key, subjects[key]))
-    # Sort the subject list, itemgetter is part of the operator module and is
-    # used to get a specific index from a complex object. In this case the
-    # work/value pair in subject list. 
-    subjectList.sort(cmp=comparatorComparison, key=itemgetter(1), reverse=True)
-    # Reconstruct a dictionary, adding the items from the sorted list until
-    # totalWork is equal to or greater than maxWork
-    totalWork = 0
-    syllabus = {}
-    for subject in subjectList:
-        if totalWork + subject[1][WORK] <= maxWork:
-            syllabus[subject[0]] = subject[1]
-            totalWork += subject[1][WORK]
-    # Return the dictionary
-    return syllabus
-
-    
+dpTime()
