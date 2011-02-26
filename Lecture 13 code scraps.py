@@ -114,7 +114,7 @@ def fastMaxVal(w, v, i, aW, m):
     v: a list of values for each available class
     i: index; length of vectors
     
-    *** This function returns the highes value but how do you find the i's that were choosen.
+    *** This function returns the highes value but how do you find the i's that were choosen.  SUGGESTION:  as each itme is taken along the take branch add the i (index) to a dictionary called best choice. 
     
     """
     global num2Calls
