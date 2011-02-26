@@ -10,6 +10,8 @@ There also seems to a problem or opportunity related to classes with the same (v
 
 On top of all this the solution can't include more than one instance of each class.
 
+Probably should confirm that w and v are same length.
+
 
 ******* Walkthrough of study pad code *******
 dpAd keeps calling itself stepping backward through the list until it find the second item of the list.  Then it begins building the memo 
