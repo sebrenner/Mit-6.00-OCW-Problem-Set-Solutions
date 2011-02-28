@@ -53,54 +53,59 @@ def fastMaxVal(w, v, i, aW, m):
     #   These are just here for counting the number of recursions.
     global num2Calls
     num2Calls += 1
-    print
-    print "i,aW", i,aW    
+    pd = False
+    if pd: print "i,aW", i,aW, '\tvalue:',v[i]
     #   Check if this index, remaining workload pair has been evaluated.
     #   If it has, return the previously calculated result(~vi).
-    try: return m[(i, aW)],['room']    #   use the try: except scheme because attempting to access a key that doesn't exist returns an error
+    try: return m[(i, aW)]    #   use the try: except scheme because attempting to access a key that doesn't exist returns an error
     except KeyError:
         
         ################ Base case.  
         if i == 0:
-            print "in base case"
+            #print "in base case"
             if w[i] <= aW:          # If there is a enough aW for the w[0] then
-                print "take base" 
-                m[(i, aW)] = v[i]   # create dictionary entry for 0th, aw with value of 0th itme
+                #print "take base" 
+                m[(i, aW)] = v[i], [0]   # create dictionary entry for 0th, aw with value of 0th itme
                 return v[i], [0]         # return value of 0th item and i itself.
             else:
-                print "don't take base"
-                m[(i, aW)] = 0      # not enough room in aW for 0th item, return 0
+                #print "don't take base"
+                m[(i, aW)] = 0,[]      # not enough room in aW for 0th item, return 0
                 return 0, []        # return 0 and an empty string.
-                
+       
         ################ Recurse with the next item closer to 0th.
         ################ This is basically builing the results for all the don't-take branches.
-        print "not in base.  Now at i =", i
+        #print "not in base.  Now at i =", i
         without_i, i_list = fastMaxVal(w, v, i-1, aW, m)   #   Set without_i to the value returned by fastMaxVal for the next i.
-        print "back up from base."
-        print "without_i, i_list:\t", without_i, i_list
+        #print "back up from base."
+        #print "without_i, i_list:\t", without_i, i_list
         if w[i] > aW:               # If there isnt a enough w[i] then
-            print "not enough room aW for w[i]", w[i] > aW
-            m[(i, aW)] = without_i      # This is a dead end with this aW.  Make a dictionary entry.
+            #print "not enough room aW for w[i]", w[i] > aW
+            m[(i, aW)] = without_i, i_list      # This is a dead end with this aW.  Make a dictionary entry.
             return without_i, i_list  # Return value of of path to this point and list of i's to this point.
             
         else:       # There is room in aW for w[i].
             #   Recursibely build the do-take branches
             #   Set with_i value to value of just selected item and add the value of the downstream branch/decisions.
-            print "enough room aW for w[i].  w[i], aW, i:\t", w[i], aW, i
-            with_i, gant = fastMaxVal(w, v, i-1, aW - w[i], m)
+            #print "enough room aW for w[i].  w[i], aW, i:\t", w[i], aW, i
+            with_i, maybe_i = fastMaxVal(w, v, i-1, aW - w[i], m)
             with_i += v[i]
-            gant += [i]
-            i_list = gant
-        res = max(with_i, without_i)    # Decide whether choosing the item produces a higher value than not choosing the item.
-        m[(i, aW)] = res                # Add a dictionary key for the better decision.
-        return res, gant            # Return the higher value, and the selected i's.
+        #res = max(with_i, without_i)    # Decide whether choosing the item produces a higher value than not choosing the item.
+        if with_i > without_i:
+            res = with_i
+            i_list = [i] + maybe_i
+        else:
+            res = without_i
+        ########  Write some code here to select the best path based on highest value.
+        m[(i, aW)] = res, i_list           # Add a dictionary key for the better decision.
+        return res, i_list            # Return the higher value, and the selected i's.
+
 
 
 
 def tryMaxVals(n):
-    w = [1,5,3,2,4]
+    w = [ 1, 5,3,2,4]   #  with aW of 7 optimal is [0,3,4] with value of 29
     v = [15,10,9,5,5]
-    w = [2,1,2,3,4,1,2,3,4]
+    w = [2,1,2,3,4,1,2,3,4]   #  with aW of 7 optimal is [] with value of 50
     v = [8,15,10,9,5,15,10,9,5]
     w = [7,4,3,4,5,6,7,8,8,9,9,5,1,1,9,15,15,10,12,5,9,5,19,15,9,1,5,3,4,1,5,3,4,9,5,9,5,9,5,15,10,15,10,15,10,5,15,10]
     v = [9,1,5,3,4,1,5,3,4,9,5,9,5,9,5,15,10,15,10,15,10,5,15,10,7,4,3,4,5,6,7,8,8,9,9,5,1,1,9,15,15,10,12,5,9,5,19,15]
