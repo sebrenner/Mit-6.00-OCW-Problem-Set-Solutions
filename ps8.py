@@ -12,7 +12,7 @@ import string
 from operator import itemgetter, attrgetter
 
 SUBJECT_FILENAME = "my_subjects.txt"
-#SUBJECT_FILENAME = "subjects.txt"
+SUBJECT_FILENAME = "subjects.txt"
 VALUE, WORK = 0, 1
 
 #
@@ -250,6 +250,10 @@ def dpAdvisor(subjects, maxWork):
     subjects: dictionary mapping subject name to (value, work)
     maxWork: int >= 0
     returns: dictionary mapping subject name to (value, work)
+    
+    These are the results for running this full catalog:
+    {8: 0.02, 10: 0.01, 45: 0.080000000000000002, 15: 0.02, 120: 0.23000000000000001, 90: 0.23000000000000001, 60: 0.11, 30: 0.050000000000000003}
+        
     """
     # TODO...
     
@@ -259,34 +263,56 @@ def dpAdvisor(subjects, maxWork):
     #   Build the work and value lists.
     work_list = []
     value_list = []
+    key_list = []
     for each in subjects:
         work_list.append(subjects[each][1])
         value_list.append(subjects[each][0])
+        key_list.append(each)
     
     # Build optimal list of courses to take.
-    rec_list = dp_decision_tree(work_list,value_list,len(work_list)-1,maxWork,m)
+    value, rec_list = dp_decision_tree(work_list,value_list,len(work_list)-1,maxWork,m)
     
     #   Build dictionary from list.
     for each in rec_list:
-        rec_dict[each] = subjects[each]
+        rec_dict[key_list[each]] = (value_list[each],work_list[each])
     return rec_dict
 
 def dp_decision_tree(w,v,i,aW,m):
+    """
+    Creates a course schedule that is optimized the maximum value.
+    """
     
-    ##  base case decision
+    ## check if value is already in the dictionary
+    try: return m[(i,aW)]
+    except KeyError:
+        ##  Leaf/Bottom of the tree case decision
+        if i == 0:
+            if w[i] < aW:
+                m[(i,aW)] = v[i], [i]
+                return v[i],[i]
+            else:
+                m[(i,aW)] = 0, []
+                return 0,[]
     
+    ## Calculate with and without i branches
+    without_i, course_list = dp_decision_tree(w,v,i-1,aW,m)
+    if w[i] > aW:
+        m[(i,aW)] = without_i, course_list
+        return without_i, course_list
+    else:
+        with_i, course_list_temp = dp_decision_tree(w, v, i-1, aW - w[i], m)
+        with_i += v[i]
     
-    ## Don't take branch
+    ## Take the branch with the higher value
+    if with_i > without_i:
+        i_value = with_i
+        course_list = [i] + course_list_temp
+    else:
+        i_value = without_i
     
-    
-    
-    ## Take branch
-    
-    
-    ## Which option is better
-    
-    
-    return ["6.01", "15.01"]
+    ## Add this value calculation to the memo
+    m[(i,aW)] = i_value, course_list
+    return i_value, course_list
     
 
 
@@ -301,9 +327,10 @@ def dpTime():
     Prints total schedule, recommended schedule, time to complete each trial.
     """
     # TODO...
-    trial_work = [15]
+    trial_work = [8,10,15,30,45,60,90,120]
     total_times = {}
     for each in trial_work:
+        print "Trial for max workload of %i." % each
         start_time = time.time()
         recommendation = dpAdvisor(subjects, each)
         end_time = time.time()
@@ -311,17 +338,6 @@ def dpTime():
         printSubjects(recommendation)
     print total_times
     return
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
 
@@ -332,7 +348,6 @@ def dpTime():
 # how its performance compares to that of bruteForceAdvisor.
 
 subjects = loadSubjects(SUBJECT_FILENAME)
-printSubjects(subjects)
 dpTime()
 
 #print subjects
