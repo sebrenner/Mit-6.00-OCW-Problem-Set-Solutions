@@ -19,10 +19,10 @@ def tryMaxVal():
     w = [1,5,3,2,4]
     v = [15,10,9,5,5]
     
-    # w = [1,2,3,4,1,2,3,4]
-    # v = [15,10,9,5,15,10,9,5]
-    # w = [7,4,3,4,5,6,7,8,8,9,9,5,1,1,9,15,15,10,12,5,9,5,19,15,9,1,5,3,4,1,5,3,4,9,5,9,5,9,5,15,10,15,10,15,10,5,15,10]
-    #     v = [9,1,5,3,4,1,5,3,4,9,5,9,5,9,5,15,10,15,10,15,10,5,15,10,7,4,3,4,5,6,7,8,8,9,9,5,1,1,9,15,15,10,12,5,9,5,19,15]
+    w = [1,2,3,4,1,2,3,4]
+    v = [15,10,9,5,15,10,9,5]
+    #w = [7,4,3,4,5,6,7,8,8,9,9,5,1,1,9,15,15,10,12,5,9,5,19,15,9,1,5,3,4,1,5,3,4,9,5,9,5,9,5,15,10,15,10,15,10,5,15,10]
+    #v = [9,1,5,3,4,1,5,3,4,9,5,9,5,9,5,15,10,15,10,15,10,5,15,10,7,4,3,4,5,6,7,8,8,9,9,5,1,1,9,15,15,10,12,5,9,5,19,15]
     
     res = maxVal(w,v,len(v)-1,7)
     print 'max val =', res, 'number of calls = ',numCalls
@@ -36,7 +36,8 @@ def maxVal0(w, v, i, aW):
     """
     
     m = {}
-    return fastMaxVal(w, v, i, aW, m)
+    value, schedule = fastMaxVal(w, v, i, aW, m)
+    return value, schedule
 
 def fastMaxVal(w, v, i, aW, m):
     """
@@ -113,7 +114,9 @@ def tryMaxVals(n):
     # res = maxVal(w,v,len(v)-1,n)
     # print 'max val =', res, 'number of calls = ',numCalls
     
-    res = maxVal0(w,v,len(v)-1,n)
+    res, best_schedule = maxVal0(w,v,len(v)-1,n)
+    best_schedule.sort()
+    print best_schedule
     print 'max val =', res, 'number of calls = ',num2Calls
 
 tryMaxVals(7)

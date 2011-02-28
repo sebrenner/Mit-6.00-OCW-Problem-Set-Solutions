@@ -11,8 +11,8 @@ import time
 import string
 from operator import itemgetter, attrgetter
 
-#SUBJECT_FILENAME = "my_subjects.txt"
-SUBJECT_FILENAME = "subjects.txt"
+SUBJECT_FILENAME = "my_subjects.txt"
+#SUBJECT_FILENAME = "subjects.txt"
 VALUE, WORK = 0, 1
 
 #
@@ -171,7 +171,10 @@ def bruteForceAdvisor(subjects, maxWork):
     for i in bestSubset:
         outputSubjects[nameList[i]] = tupleList[i]
     return outputSubjects
+
+
 counter = 0
+
 def bruteForceAdvisorHelper(subjects, maxWork, i, bestSubset, bestSubsetValue, subset, subsetValue, subsetWork):
     # Hit the end of the list.
     if i >= len(subjects):
@@ -250,45 +253,42 @@ def dpAdvisor(subjects, maxWork):
     """
     # TODO...
     
-    def sort(subjects,sort_key,hi_low):
-        """
-        Takes a dictionary converts it to a list;
-        swaps the key for the value;
-        sorts by the value (high to low);
-        then swaps value and key again.
-        
-        Returns a list of tuples that represent each dictionary entry sorted by value.
-        
-        subjects: dictionary mapping subject name to (value, work)
-        sort_key: an int that represents the index of the tuple by which the list should be sorted, e.g., if sort_key = 1, then list will be sorted by work.
-        hi_low: a boolean.  If true the list will be sorted high to low, otherwise it will be sorted low to high
-        returns: list of subjects sorted by sort_key, ordered by hi_low
-        
-        """
-        result = []
-        items = subjects.items()
-        items = sorted(items, key=lambda items: items[1][sort_key], reverse=hi_low)
-        for i in items:
-            result.append(i[0])
-        return result
-    
-    workLoad = 0
-    sortedSubjects = sort(subjects,0,True)
-    rec_list = []
     rec_dict = {}
+    m = {}
+        
+    #   Build the work and value lists.
+    work_list = []
+    value_list = []
+    for each in subjects:
+        work_list.append(subjects[each][1])
+        value_list.append(subjects[each][0])
     
-    done = True
-    #while done:
-    for i in range(10):
-        for each in sortedSubjects:
-            if subjects[each][1] <= maxWork - workLoad:
-                rec_list.append(each)
-                workLoad += subjects[each][1]
-        if workLoad == maxWork: done = False
+    # Build optimal list of courses to take.
+    rec_list = dp_decision_tree(work_list,value_list,len(work_list)-1,maxWork,m)
     
+    #   Build dictionary from list.
     for each in rec_list:
         rec_dict[each] = subjects[each]
     return rec_dict
+
+def dp_decision_tree(w,v,i,aW,m):
+    
+    ##  base case decision
+    
+    
+    ## Don't take branch
+    
+    
+    
+    ## Take branch
+    
+    
+    ## Which option is better
+    
+    
+    return ["6.01", "15.01"]
+    
+
 
 #
 # Problem 5: Performance Comparison
@@ -297,8 +297,33 @@ def dpTime():
     """
     Runs tests on dpAdvisor and measures the time required to compute an
     answer.
+    
+    Prints total schedule, recommended schedule, time to complete each trial.
     """
     # TODO...
+    trial_work = [15]
+    total_times = {}
+    for each in trial_work:
+        start_time = time.time()
+        recommendation = dpAdvisor(subjects, each)
+        end_time = time.time()
+        total_times[each] = round(end_time - start_time, 2)
+        printSubjects(recommendation)
+    print total_times
+    return
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 # Problem 5 Observations
 # ======================
@@ -307,6 +332,9 @@ def dpTime():
 # how its performance compares to that of bruteForceAdvisor.
 
 subjects = loadSubjects(SUBJECT_FILENAME)
+printSubjects(subjects)
+dpTime()
+
 #print subjects
 #print "Course Catalog"
 #printSubjects(loadSubjects(SUBJECT_FILENAME))
@@ -322,6 +350,6 @@ subjects = loadSubjects(SUBJECT_FILENAME)
 
 # printSubjects(bruteForceAdvisor(subjects,15))
 # 
-bruteForceTime()
+#bruteForceTime()
 
 #print dpAdvisor(subjects, 15)
