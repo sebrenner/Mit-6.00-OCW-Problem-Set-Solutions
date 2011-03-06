@@ -22,7 +22,7 @@ class Square(Shape):
         """
         Returns area of the square
         """
-        return self.side**2
+        return round(self.side**2)
     def __str__(self):
         return 'Square with side ' + str(self.side)
     def __eq__(self, other):
@@ -42,7 +42,7 @@ class Circle(Shape):
         """
         Returns approximate area of the circle
         """
-        return 3.14159*(self.radius**2)
+        return round(3.14159*(self.radius**2))
     def __str__(self):
         return 'Circle with radius ' + str(self.radius)
     def __eq__(self, other):
@@ -71,7 +71,7 @@ class Triangle(Shape):
         """
         Returns approximate area of the triangle 
         """
-        return .5 * self.base * self.height
+        return round(.5 * self.base * self.height,2)
     
     def __str__(self):
         """
@@ -118,7 +118,7 @@ class ShapeSet:
         Returns the shape at the given index
         """
         return self.members[int]
-
+    
     def __iter__(self):
         """
         Return an iterator that allows you to iterate over the set of
@@ -145,15 +145,7 @@ class ShapeSet:
         for each in my_shapeset.members:
             taco = taco + "\n" + each.__str__()
         return taco
-        
-        
-        
-        
-        result =''
-        for each in self.members:
-            result = result + '\n' + each.__str__()
-            print each.__str__()
-	    return result 
+    
     
 
 #
@@ -162,11 +154,33 @@ class ShapeSet:
 def findLargest(shapes):
     """
     Returns a tuple containing the elements of ShapeSet with the largest area.
-
+    
     shapes: ShapeSet
+    
+    This is a sorting problem
     """
     ## TO DO
-    pass
+    my_list = []
+    #sort list by area function
+    for each in shapes:
+        #print each
+        my_list.append((each.area(), shapes.index))
+    #print my_list
+    my_list.sort()
+    my_list.reverse()
+    #print my_list
+    result = []
+    for each in my_list:
+        # print "each", each
+        # print "each0", each[0]
+        # print "each1", each[1]
+        # print "mlys" ,my_list[0][0]
+        # print
+        if my_list[0][0] == each[0]:
+            result.append(each[1])
+    print tuple(result)
+    
+    return tuple(result)
     
     
 
@@ -174,7 +188,11 @@ def findLargest(shapes):
 # Problem 4: Read shapes from a file into a ShapeSet
 #
 
-def readShapesFromFile(filename): """Retrieves shape information from the given file. Creates and returns a ShapeSet with the shapes found. filename: string
+def readShapesFromFile(filename):
+    """
+    Retrieves shape information from the given file. Creates and returns a ShapeSet with the shapes found. 
+    
+    filename: string
     """
     ## TO DO
 
@@ -185,9 +203,8 @@ my_square = Square(4)
 my_square2 = Square(1)
 my_triangle = Triangle(1,1)
 
-
 my_shapeset = ShapeSet()
-
+#print len(my_shapeset.members)
 # 
 # print my_triangle
 # print my_triangle.area()
@@ -197,7 +214,7 @@ my_shapeset = ShapeSet()
 # print my_triangle
 
 
-my_shapeset.addShape(Circle(2))
+my_shapeset.addShape(Circle(2.25676))
 my_shapeset.addShape(Square(4))
 my_shapeset.addShape(Square(1))
 my_shapeset.addShape(Triangle(1,1))
@@ -208,4 +225,7 @@ my_shapeset.addShape(Triangle(1,1))
 # print my_shapeset.next()
 # print my_shapeset.index
 
-print my_shapeset.__str__()
+#print my_shapeset.__str__()
+
+findLargest(my_shapeset)
+#sorted(my_shapeset.members, key=my_shapeset.area())
