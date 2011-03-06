@@ -142,10 +142,9 @@ class ShapeSet:
         """
         ## TO DO
         taco = ''
-        for each in my_shapeset.members:
+        for each in self.members:
             taco = taco + "\n" + each.__str__()
         return taco
-    
     
 
 #
@@ -171,13 +170,14 @@ def findLargest(shapes):
     #print my_list
     result = []
     for each in my_list:
-        # print "each", each
+        #print "each", each
+        #print "obj", shapes[each[1]-1]
         # print "each0", each[0]
         # print "each1", each[1]
         # print "mlys" ,my_list[0][0]
         # print
         if my_list[0][0] == each[0]:
-            result.append(each[1])
+            result.append(shapes[each[1]-1])
     return tuple(result)
     
     
@@ -186,6 +186,8 @@ def findLargest(shapes):
 # Problem 4: Read shapes from a file into a ShapeSet
 #
 
+SHAPES_FILENAME = "shapes.txt"
+
 def readShapesFromFile(filename):
     """
     Retrieves shape information from the given file. Creates and returns a ShapeSet with the shapes found. 
@@ -193,15 +195,44 @@ def readShapesFromFile(filename):
     filename: string
     """
     ## TO DO
+    inFile = open(filename, 'r', 0)
+    object_number = -1
+    object_dictionary = {}
+    for line in inFile:
+        line = line.rstrip()
+        OBJ_DESC = line.split(',')
+        #print OBJ_DESC[0]
+        object_number += 1
+        if OBJ_DESC[0] == "circle":
+            #print "in circle", OBJ_DESC[0],object_number
+            name = "circle" + str(object_number)
+            #print "name", name
+            object_dictionary[name] = Circle(OBJ_DESC[1])
+        if OBJ_DESC[0] == "triangle":
+            #print "in tri",OBJ_DESC[0],object_number
+            name = "triangle" + str(object_number)
+            object_dictionary[name] = Triangle(OBJ_DESC[1],OBJ_DESC[2])
+        if OBJ_DESC[0] == "square":
+            #print "in sqr",OBJ_DESC[0],object_number
+            name = "square" + str(object_number)
+            object_dictionary[name] = Square(OBJ_DESC[1])
+    
+    shape_set = ShapeSet()
+    #print object_dictionary
+    for each in object_dictionary:
+        shape_set.addShape(object_dictionary[each])
+        # print "each" ,each
+    # print "shape set :", shape_set
+    return shape_set
 
-
-
-my_circle = Circle(2)
-my_square = Square(4)
-my_square2 = Square(1)
-my_triangle = Triangle(1,1)
-
-my_shapeset = ShapeSet()
+my_ss = readShapesFromFile(SHAPES_FILENAME)
+print my_ss
+# my_circle = Circle(2)
+# my_square = Square(4)
+# my_square2 = Square(1)
+# my_triangle = Triangle(1,1)
+# 
+# my_shapeset = ShapeSet()
 #print len(my_shapeset.members)
 # 
 # print my_triangle
@@ -212,12 +243,12 @@ my_shapeset = ShapeSet()
 # print my_triangle
 
 
-my_shapeset.addShape(Circle(2.25676))
-my_shapeset.addShape(Square(4))
-my_shapeset.addShape(Square(1))
-my_shapeset.addShape(Triangle(1,1))
-
-#print my_shapeset.members
+# my_shapeset.addShape(Circle(2.25676))
+# my_shapeset.addShape(Square(4))
+# my_shapeset.addShape(Square(1))
+# my_shapeset.addShape(Triangle(1,1))
+# 
+# print my_shapeset
 #print my_shapeset.next()
 # print my_shapeset.index
 # print my_shapeset.next()
@@ -225,15 +256,28 @@ my_shapeset.addShape(Triangle(1,1))
 
 #print my_shapeset.__str__()
 
-findLargest(my_shapeset)
+# findLargest(my_shapeset)
 #sorted(my_shapeset.members, key=my_shapeset.area())
 
+def testFindLargest():
+    ss = ShapeSet() 
+    ss.addShape(Triangle(1.2,2.5)) 
+    ss.addShape(Circle(4)) 
+    ss.addShape(Square(3.6)) 
+    ss.addShape(Triangle(1.6,6.4)) 
+    ss.addShape(Circle(2.2)) 
+    largest = findLargest(ss)
+    print largest
+    for e in largest: print e
+    
+    
+    ss = ShapeSet()
+    ss.addShape(Triangle(3,8)) 
+    ss.addShape(Circle(1)) 
+    ss.addShape(Triangle(4,6)) 
+    largest = findLargest(ss) 
+    print largest
+    for e in largest:
+        print e
 
-ss = ShapeSet() 
-ss.addShape(Triangle(1.2,2.5)) 
-ss.addShape(Circle(4)) 
-ss.addShape(Square(3.6)) 
-ss.addShape(Triangle(1.6,6.4)) 
-ss.addShape(Circle(2.2)) 
-largest = findLargest(ss)
-for e in largest: print e
+#testFindLargest()

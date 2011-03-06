@@ -1,0 +1,16 @@
+circle,4.3
+square,3
+circle,2
+triangle,4.2,4
+square,4
+circle,4.5
+square,16.1
+circle,3.3
+triangle,3,6.6
+triangle,1.3,4
+square,2.7
+triangle,4,1
+circle,6.0
+triangle,2.6,1.2
+square,10.9
+circle,19.4
