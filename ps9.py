@@ -178,8 +178,6 @@ def findLargest(shapes):
         # print
         if my_list[0][0] == each[0]:
             result.append(each[1])
-    print tuple(result)
-    
     return tuple(result)
     
     
@@ -229,3 +227,13 @@ my_shapeset.addShape(Triangle(1,1))
 
 findLargest(my_shapeset)
 #sorted(my_shapeset.members, key=my_shapeset.area())
+
+
+ss = ShapeSet() 
+ss.addShape(Triangle(1.2,2.5)) 
+ss.addShape(Circle(4)) 
+ss.addShape(Square(3.6)) 
+ss.addShape(Triangle(1.6,6.4)) 
+ss.addShape(Circle(2.2)) 
+largest = findLargest(ss)
+for e in largest: print e
