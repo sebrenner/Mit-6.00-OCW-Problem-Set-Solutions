@@ -160,8 +160,8 @@ def findLargest(shapes):
         try:
             if each.area() > result[-1].area():
                 result = (each,)
-            elif each == result[-1]:
-                result = (result, each)
+            elif each.area() == result[-1].area():
+                result += (each,)
         except AttributeError:
             result = (each,)
     return result
@@ -180,79 +180,20 @@ def readShapesFromFile(filename):
     """
     ## TO DO
     inFile = open(filename, 'r', 0)
-    object_number = -1
-    object_dictionary = {}
-    for line in inFile:
-        line = line.rstrip()
-        OBJ_DESC = line.split(',')
-        #print OBJ_DESC[0]
-        object_number += 1
-        if OBJ_DESC[0] == "circle":
-            #print "in circle", OBJ_DESC[0],object_number
-            name = "circle" + str(object_number)
-            #print "name", name
-            object_dictionary[name] = Circle(OBJ_DESC[1])
-        if OBJ_DESC[0] == "triangle":
-            #print "in tri",OBJ_DESC[0],object_number
-            name = "triangle" + str(object_number)
-            object_dictionary[name] = Triangle(OBJ_DESC[1],OBJ_DESC[2])
-        if OBJ_DESC[0] == "square":
-            #print "in sqr",OBJ_DESC[0],object_number
-            name = "square" + str(object_number)
-            object_dictionary[name] = Square(OBJ_DESC[1])
-    
     shape_set = ShapeSet()
-    #print object_dictionary
-    for each in object_dictionary:
-        shape_set.addShape(object_dictionary[each])
-        # print "each" ,each
-    # print "shape set :", shape_set
+    for line in inFile:
+        obj_para = line.split(",")
+        if obj_para[0] == "circle":
+            shape = Circle(obj_para[1])
+        if obj_para[0] == "square":
+            shape = Square(obj_para[1])
+        if obj_para[0] == "triangle":
+            shape = Triangle(obj_para[1],obj_para[2])
+        shape_set.addShape(shape)
     return shape_set
 
-circle01 = Circle(5)
-square01 = Square(4)
-triangle01 = Triangle(4,4)
-circle02 = Circle(19)
-
-print circle01.area()
-print square01.area()
-print triangle01.area()
-print circle02.area()
-# 
-# 
-# print triangle01 > square01
-# print triangle01 < square01
-
-# print circle01
-# print square01
-# print triangle01
-
-ss01 = ShapeSet()
-ss01.addShape(circle01)
-ss01.addShape(triangle01)
-ss01.addShape(square01)
-ss01.addShape(circle02)
-
-print
-print "findLargest(ss01)"
-largest = findLargest(ss01)
-# print largest
-# print circle01
-print 
-for each in largest:
-    print each is circle02
-    print each is circle01
-    print each is square01
-    print each is triangle01
-# print largest[0] is circle02
-# print largest[1] is circle01
-# print largest[2] is circle01
-print 
-# for each in ss01:
-    # print each
-# 
-# my_ss = readShapesFromFile(SHAPES_FILENAME)
-# print my_ss
+my_ss = readShapesFromFile(SHAPES_FILENAME)
+print my_ss
 
 # my_circle = Circle(2)
 # my_square = Square(4)
