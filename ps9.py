@@ -9,7 +9,6 @@ from string import *
 class Shape(object):
     def area(self):
         raise AttributeException("Subclasses should override this method.")
-        
     
 
 class Square(Shape):
@@ -18,19 +17,23 @@ class Square(Shape):
         h: length of side of the square
         """
         self.side = float(h)
+    
     def area(self):
         """
         Returns area of the square
         """
         return round(self.side**2)
+    
     def __str__(self):
         return 'Square with side ' + str(self.side)
+    
     def __eq__(self, other):
         """
         Two squares are equal if they have the same dimension.
         other: object to check for equality
         """
         return type(other) == Square and self.side == other.side
+    
 
 class Circle(Shape):
     def __init__(self, radius):
@@ -38,19 +41,23 @@ class Circle(Shape):
         radius: radius of the circle
         """
         self.radius = float(radius)
+    
     def area(self):
         """
         Returns approximate area of the circle
         """
         return round(3.14159*(self.radius**2))
+    
     def __str__(self):
         return 'Circle with radius ' + str(self.radius)
+    
     def __eq__(self, other):
         """
         Two circles are equal if they have the same radius.
         other: object to check for equality
         """
         return type(other) == Circle and self.radius == other.radius
+    
 
 #
 # Problem 1: Create the Triangle class
@@ -65,7 +72,6 @@ class Triangle(Shape):
         """
         self.base = float(base)
         self.height = float(height)
-    
     
     def area(self):
         """
@@ -86,7 +92,6 @@ class Triangle(Shape):
         """
         return type(other) == Triangle and self.base == other.base and self.height == other.height
     
-    
 
 #
 # Problem 2: Create the ShapeSet class
@@ -99,9 +104,9 @@ class ShapeSet:
         """
         Initialize any needed variables
         """
+        ## TO DO
         self.members = []
         self.index = 0
-        ## TO DO
     
     def addShape(self, sh):
         """
@@ -112,12 +117,7 @@ class ShapeSet:
         ## TO DO
         if sh not in self.members:
             self.members.append(sh)
-    
-    def __getitem__(self, int):
-        """
-        Returns the shape at the given index
-        """
-        return self.members[int]
+            # print sh, "added to set."
     
     def __iter__(self):
         """
@@ -125,14 +125,8 @@ class ShapeSet:
         shapes, one shape at a time
         """
         ## TO DO
-        return self
-    
-    def next(self):
-        if self.index == len(self.members):
-            raise StopIteration
-        current_index = self.index
-        self.index = self.index + 1
-        return self.members[current_index]
+        for i in self.members:
+            yield i
     
     def __str__(self):
         """
@@ -141,11 +135,14 @@ class ShapeSet:
         (circles, then squares, then triangles)
         """
         ## TO DO
-        taco = ''
+        my_string = ""
         for each in self.members:
-            taco = taco + "\n" + each.__str__()
-        return taco
+            # print each
+            my_string += str(each) + "\n"
+        return my_string
     
+    
+
 
 #
 # Problem 3: Find the largest shapes in a ShapeSet
@@ -158,29 +155,16 @@ def findLargest(shapes):
     
     This is a sorting problem
     """
-    ## TO DO
-    my_list = []
-    #sort list by area function
+    result = (0,)
     for each in shapes:
-        #print each
-        my_list.append((each.area(), shapes.index))
-    #print my_list
-    my_list.sort()
-    my_list.reverse()
-    #print my_list
-    result = []
-    for each in my_list:
-        #print "each", each
-        #print "obj", shapes[each[1]-1]
-        # print "each0", each[0]
-        # print "each1", each[1]
-        # print "mlys" ,my_list[0][0]
-        # print
-        if my_list[0][0] == each[0]:
-            result.append(shapes[each[1]-1])
-    return tuple(result)
-    
-    
+        try:
+            if each.area() > result[-1].area():
+                result = (each,)
+            elif each == result[-1]:
+                result = (result, each)
+        except AttributeError:
+            result = (each,)
+    return result
 
 #
 # Problem 4: Read shapes from a file into a ShapeSet
@@ -225,8 +209,51 @@ def readShapesFromFile(filename):
     # print "shape set :", shape_set
     return shape_set
 
-my_ss = readShapesFromFile(SHAPES_FILENAME)
-print my_ss
+circle01 = Circle(5)
+square01 = Square(4)
+triangle01 = Triangle(4,4)
+circle02 = Circle(19)
+
+print circle01.area()
+print square01.area()
+print triangle01.area()
+print circle02.area()
+# 
+# 
+# print triangle01 > square01
+# print triangle01 < square01
+
+# print circle01
+# print square01
+# print triangle01
+
+ss01 = ShapeSet()
+ss01.addShape(circle01)
+ss01.addShape(triangle01)
+ss01.addShape(square01)
+ss01.addShape(circle02)
+
+print
+print "findLargest(ss01)"
+largest = findLargest(ss01)
+# print largest
+# print circle01
+print 
+for each in largest:
+    print each is circle02
+    print each is circle01
+    print each is square01
+    print each is triangle01
+# print largest[0] is circle02
+# print largest[1] is circle01
+# print largest[2] is circle01
+print 
+# for each in ss01:
+    # print each
+# 
+# my_ss = readShapesFromFile(SHAPES_FILENAME)
+# print my_ss
+
 # my_circle = Circle(2)
 # my_square = Square(4)
 # my_square2 = Square(1)
@@ -280,4 +307,16 @@ def testFindLargest():
     for e in largest:
         print e
 
-#testFindLargest()
+def testSamenes():
+    t = Triangle(6,6)
+    c = Circle(1)
+    ss = ShapeSet()
+    ss.addShape(t)
+    ss.addShape(c)
+    largest = findLargest(ss)
+    print largest
+    print largest[0] is t
+    print largest[0] is c
+
+testFindLargest()
+
