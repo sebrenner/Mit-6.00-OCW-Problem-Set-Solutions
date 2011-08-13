@@ -53,13 +53,13 @@ def testAll():
     """
     
     print "Uncomment the tests in this file as you complete each problem."
-
+    
     print 'PROBLEM 2 -----------------------------------------'
     testHand()
-
+    
     print 'PROBLEM 3 -----------------------------------------'
     testPlayer()
-
+    
     print 'PROBLEM 4 -----------------------------------------'
     testComputerPlayer()
 
