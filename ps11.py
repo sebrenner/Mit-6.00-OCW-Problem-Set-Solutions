@@ -3,8 +3,12 @@
 # Collaborators:  None
 # Time: 
 
+import os, sys, csv
 import math
 import random
+import ps11_visualize
+import pylab
+
 # === Provided classes
 
 class Position(object):
@@ -48,7 +52,7 @@ class Position(object):
         new_x = old_x + delta_x
         new_y = old_y + delta_y
         return Position(new_x, new_y)
-
+    
 
 
 # === Problems 1 and 2
@@ -97,11 +101,11 @@ class RectangularRoom(object):
         returns: True if (m, n) is cleaned, False otherwise
         """
         # TODO: Your code goes here
-        questionedPosition = Position(m,n)
+        questionedPosition = (int(m),int(n))
         if questionedPosition in self.cleanTiles:
+            # print questionedPosition 
             return True
         return False
-        
     
     def getNumTiles(self):
         """
@@ -115,7 +119,7 @@ class RectangularRoom(object):
     def getNumCleanedTiles(self):
         """
         Return the total number of clean tiles in the room.
-
+        
         returns: an integer
         """
         # TODO: Your code goes here
@@ -125,7 +129,7 @@ class RectangularRoom(object):
     def getRandomPosition(self):
         """
         Return a random position inside the room.
-
+        
         returns: a Position object.
         """
         # TODO: Your code goes here
@@ -133,11 +137,11 @@ class RectangularRoom(object):
         randomWidth = random.randint(0, self.roomWidth-1)
         randomHeight = random.randint(0, self.roomHeight-1)
         return Position(randomWidth, randomHeight)
-        
+    
     def isPositionInRoom(self, pos):
         """
         Return True if POS is inside the room.
-
+        
         pos: a Position object.
         returns: True if POS is in the room, False otherwise.
         """
@@ -150,6 +154,7 @@ class RectangularRoom(object):
         if pos.getX() >= self.roomWidth: return False
         if pos.getY() >= self.roomHeight: return False
         return True
+    
 
 
 class BaseRobot(object):
@@ -198,7 +203,7 @@ class BaseRobot(object):
     def getRobotDirection(self):
         """
         Return the direction of the robot.
-
+        
         returns: an integer d giving the direction of the robot as an angle in
         degrees, 0 <= d < 360.
         """
@@ -208,7 +213,7 @@ class BaseRobot(object):
     def setRobotPosition(self, position):
         """
         Set the position of the robot to POSITION.
-
+        
         position: a Position object.
         """
         # TODO: Your code goes here
@@ -217,16 +222,17 @@ class BaseRobot(object):
     def setRobotDirection(self, direction):
         """
         Set the direction of the robot to DIRECTION.
-
+        
         direction: integer representing an angle in degrees
         """
         # TODO: Your code goes here
         self.robotDirection = direction 
+    
 
 class Robot(BaseRobot):
     """
     A Robot is a BaseRobot with the standard movement strategy.
-
+    
     At each time-step, a Robot attempts to move in its current
     direction; when it hits a wall, it chooses a new direction
     randomly.
@@ -234,7 +240,7 @@ class Robot(BaseRobot):
     def updatePositionAndClean(self):
         """
         Simulate the passage of a single time-step.
-
+        
         Move the robot to a new position and mark the tile it is on as having
         been cleaned.
         """
@@ -254,6 +260,7 @@ class Robot(BaseRobot):
                 notAtWall = False
             else:   # pick a new direction at random
                 self.robotDirection = random.randint(0, 360)
+    
 
 # === Problem 3
 
@@ -287,7 +294,9 @@ def runSimulation(num_robots, speed, width, height, min_coverage, num_trials, ro
     # TODO: Your code goes here
     
     trialsCollection = []                       # list to hold lists of date from each trial
-    for m in range(num_trials-1):               # for each trial
+    for m in range(num_trials):               # for each trial
+        # print "Trial %i:" % m,
+        if visualize: anim = ps11_visualize.RobotVisualization(num_robots, width, height, .02)
         # create the room
         testRoom = RectangularRoom(width, height)
         
@@ -295,30 +304,24 @@ def runSimulation(num_robots, speed, width, height, min_coverage, num_trials, ro
         robotList = []
         for i in range(num_robots):
             robotList.append(robot_type(testRoom, speed))
-        # print "%i robots created" %len(robotList)
-        
         
         # initialize for this trial
         percentClean = 0.0000000
         progressList = []
-        # print
+        
         while percentClean < min_coverage:     # clean until percent clean >= min coverage
-            # print "percentClean, min_coverage", percentClean, min_coverage
+            if visualize: anim.update(testRoom, robotList)
             for eachRobot in robotList:             # for each time-step make each robot clean
                 eachRobot.updatePositionAndClean()
-                # print eachRobot.getRobotPosition().getX(), eachRobot.getRobotPosition().getY()
-            # print "number cleaned, number of tiles: %i, %i" % (testRoom.getNumCleanedTiles(),testRoom.getNumTiles())
             percentClean = float(testRoom.getNumCleanedTiles()) / float(testRoom.getNumTiles())
-            # print "time-steps: %i, Percent complete %f." % (len(progressList), percentClean)
             progressList.append(percentClean)
+        if visualize: anim.done()
         trialsCollection.append(progressList)
-    sumTimeSteps = 0    
-    for each in trialsCollection:
-        # print "the %i robot(s) took %i clock ticks to %f clean a %i x %i room." %(num_robots, len(each), min_coverage, width, height)
-        sumTimeSteps += len(each)
-    avgTimeSteps = sumTimeSteps / num_trials
-    print "avgTimeSteps:", avgTimeSteps
-            
+        
+        # print "%i robot(s) took %i clock-ticks to clean %i %% of a %ix%i room." %(num_robots, len(progressList), int(min_coverage * 100), width, height)
+    averageOfTrials = calcAvgLengthList(trialsCollection)
+    # print "On average, the %i robot(s) took %i clock ticks to %f clean a %i x %i room." %(num_robots, int(averageOfTrials), min_coverage, width, height)
+    return trialsCollection
             
         
 
@@ -353,31 +356,83 @@ def computeMeans(list_of_lists):
 
 
 # === Problem 4
+def calcAvgLengthList(listOfLists):
+    """
+    Takes a list of lists and then calculates the average length of the lists
+    """
+    sumOfLengths = 0
+    averageLength = 0
+    for eachList in listOfLists:
+        sumOfLengths += len(eachList)
+    averageLength = sumOfLengths / len(listOfLists)
+    # print averageLength
+    return averageLength
+
 def showPlot1():
     """
     Produces a plot showing dependence of cleaning time on room size.
+    
+    How long does it take a single robot to clean 75% of each of the following types of rooms: 5x5, 10x10, 15x15, 20x20, 25x25? Output a figure that plots the mean time (on the Y-axis) against the area of the room.
     """
-    # TODO: Your code goes here
+    print """How long does it take a single robot to clean 75% of each of the following types of rooms: 5x5, 10x10, 15x15, 20x20, 25x25? Output a figure that plots the mean time (on the Y-axis) against the area of the room."""
+    
+    square_size = [5,10,15,20,25]
+    listOfMeanTimes = []
+    for each in square_size:
+        trialsCollection = runSimulation(1, 1.0, each, each, 0.75, 25, Robot, False)
+        averageOfTrials = calcAvgLengthList(trialsCollection)
+        print "On average, the robot took %i clock ticks to clean 75%% of a %i x %i room." % (int(averageOfTrials), each, each)
+        listOfMeanTimes.append((each, int(averageOfTrials)))
+    write_lists_csv(listOfMeanTimes,"robot-x-size-of-square-room.csv", ["Size of Square Room", "Mean Time"])
 
 def showPlot2():
     """
     Produces a plot showing dependence of cleaning time on number of robots.
+    
+    How long does it take to clean 75% of a 25x25 room with each of 1-10 robots? Output a figure that plots the mean time (on the Y-axis) against the number of robots.
+    
     """
     # TODO: Your code goes here
+    listOfMeanTimes = []
+    for each in range(1,11):
+        trialsCollection = runSimulation(each, 1.0, 25, 25, 0.75, 25, Robot, False)
+        averageOfTrials = calcAvgLengthList(trialsCollection)
+        # print "On average, the robot took %i clock ticks to clean 75%% of a %i x %i room." % (int(averageOfTrials), each, each)
+        listOfMeanTimes.append((each, int(averageOfTrials)))
+    write_lists_csv(listOfMeanTimes,"numRobot-x-square-room.csv", ["Num of Robots", "Mean Time"])
 
 def showPlot3():
     """
     Produces a plot showing dependence of cleaning time on room shape.
+    How long does it take two robots to clean 75% of rooms with dimensions 20x20, 25x16, 40x10, 50x8, 80x5, and 100x4? (Notice that the rooms have the same area.) Output a figure that plots the mean time (on the Y-axis) against the ratio of width to height.
     """
     # TODO: Your code goes here
+    room_size = [(20, 20), (25, 16), (40, 10), (50, 8), (80, 5), (100, 4)]
+    listOfMeanTimes = []
+    for each in room_size:
+        trialsCollection = runSimulation(1, 1.0, each[0], each[1], 0.75, 25, Robot, False)
+        averageOfTrials = calcAvgLengthList(trialsCollection)
+        print "On average, the robot took %i clock ticks to clean 75%% of a %i x %i room." % (int(averageOfTrials), each[0], each[1])
+        listOfMeanTimes.append((each, int(averageOfTrials)))
+    # print "write_lists_csv(listOfMeanTimes,"room-shape.csv", ["Means"])"
+    write_lists_csv(listOfMeanTimes,"room-shape.csv", ["Room Dimensions","Means"])
 
 def showPlot4():
     """
     Produces a plot showing cleaning time vs. percentage cleaned, for
     each of 1-5 robots.
+    How does the time it takes to clean a 25x25 room vary as min_coverage changes? Output a figure that plots mean time (on the Y-axis) against the percentage cleaned, for each of 1-5 robots. Your plot will have multiple curves.
     """
     # TODO: Your code goes here
-
+    percentClean = [.25,.5,.75,.8,.9,1]
+    listOfMeanTimes = []
+    for i in range(1,11):
+        for each in percentClean:
+            trialsCollection = runSimulation(i, 1.0, 25, 25, each, 25, Robot, False)
+            averageOfTrials = calcAvgLengthList(trialsCollection)
+            listOfMeanTimes.append((i, each, int(averageOfTrials)))
+    write_lists_csv(listOfMeanTimes,"robots-percentClean.csv", ["Num. Robots", "Percent cleaned", "Means"])
+    
 
 # === Problem 5
 
@@ -388,7 +443,30 @@ class RandomWalkRobot(BaseRobot):
     time-step.
     """
     # TODO: Your code goes here
-
+    
+    def updatePositionAndClean(self):
+        """
+        Simulate the passage of a single time-step.
+        
+        Move the robot to a new position and mark the tile it is on as having
+        been cleaned.
+        """
+        # TODO: Your code goes here
+        
+        notAtWall = True
+        
+        while notAtWall:
+            currentPosition = self.getRobotPosition()
+            # give robot new direction
+            self.setRobotDirection(random.randint(0, 360))
+            nextPosition = currentPosition.getNewPosition(self.getRobotDirection(), self.robotSpeed)
+            if self.robotRoom.isPositionInRoom(nextPosition):
+                self.robotPosition = nextPosition
+                self.robotRoom.cleanTileAtPosition(self.robotPosition)
+                notAtWall = False
+            else:   # pick a new direction at random
+                self.robotDirection = random.randint(0, 360)
+    
 
 # === Problem 6
 
@@ -399,15 +477,46 @@ def showPlot5():
     # TODO: Your code goes here
 
 
+def write_lists_csv(block_list,file_name, headers):
+    """
+    Takes a list or list of lists, a files location//name, and a list of headers
+    Writes the itemsof the lists as rows in a CSV file.  Each item of the list is a comma-separated value.
+    Returns the location of the CSV file.
+    """
+    fileWriter = csv.writer(open(file_name, 'wb'), delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    fileWriter.writerow(headers)
+    for each in block_list:
+        fileWriter.writerow(each)
+    
+    
+    # fileWriter = open(file_name, 'w')
+    # fileWriter.writerow(headers)
+    # for item in block_list:
+    #   fileWriter.write("%s\n" % item)
+
+
 # === Run code
 # def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,robot_type, visualize):
-# print "simulation 1"
-# avg = runSimulation(10, 1.0, 15, 20, 0.8, 30, Robot, False)
-print "simulation 2"
-avg = runSimulation(01, 1.0, 05, 05, 1.0, 3000, Robot, False)
-print "simulation 3"
-avg = runSimulation(01, 1.0, 10, 10, 0.75, 3000, Robot, False)
-print "simulation 4"
-avg = runSimulation(01, 1.0, 10, 10, 0.9, 3000, Robot, False)
-print "simulation 5"
-avg = runSimulation(01, 1.0, 20, 20, 1.0, 3000, Robot, False)
+# print "Simulation 1:"
+# avg = runSimulation(1, 1.0, 25, 20, 0.8, 70, Robot, False)
+
+# print "simulation 2"
+# RobotAvg = runSimulation(1, 1.0, 10, 10, 0.9, 1, Robot, False)
+# print "simulation 2.1 "
+# 
+# RandomWalkRobotAvg = runSimulation(1, 1.0, 10, 10, 0.9, 1, RandomWalkRobot, False)
+
+# print "simulation 3"
+# avg = runSimulation(1, 1.0, 20, 10, 0.9, 30, Robot, False)
+# print "simulation 4"
+# avg = runSimulation(1, 1.0, 40, 10, 0.9, 30, Robot, False)
+# print "simulation 5"
+# avg = runSimulation(1, 1.0, 80, 10, 0.9, 30, Robot, False)
+
+# write_lists_csv(computeMeans(RobotAvg),"robot_means.csv", ["Means"])
+# write_lists_csv(computeMeans(RandomWalkRobotAvg),"rndRobot_means.csv", ["Means"])
+# 
+showPlot1()
+showPlot2()
+showPlot3()
+showPlot4()
