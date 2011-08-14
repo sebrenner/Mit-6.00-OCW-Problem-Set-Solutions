@@ -4,7 +4,7 @@
 # Time: 
 
 import math
-
+import random
 # === Provided classes
 
 class Position(object):
@@ -70,9 +70,9 @@ class RectangularRoom(object):
         height: an integer > 0
         """
         # TODO: Your code goes here
-        roomWidth = width
-        roomHeight = height
-        cleanTiles = {}         # a dictionary of Position objects
+        self.roomWidth = width
+        self.roomHeight = height
+        self.cleanTiles = {}         # a dictionary of Position objects
     
     def cleanTileAtPosition(self, pos):
         """
@@ -82,8 +82,9 @@ class RectangularRoom(object):
         pos: a Position
         """
         # TODO: Your code goes here
-        # Add the position to the dictionary of clean positions; increment if necessary
-        self.cleanTiles[pos] = self.cleanTiles.get(pos,0) + 1
+        # Convert postion to integer, add the position to the dictionary of clean positions; increment if necessary
+        intPosition = (int(pos.getX()), int(pos.getY()))
+        self.cleanTiles[intPosition] = self.cleanTiles.get(intPosition,0) + 1
     
     def isTileCleaned(self, m, n):
         """
@@ -109,7 +110,7 @@ class RectangularRoom(object):
         returns: an integer
         """
         # TODO: Your code goes here
-        return self.width * self.height
+        return self.roomWidth * self.roomHeight
     
     def getNumCleanedTiles(self):
         """
@@ -129,8 +130,8 @@ class RectangularRoom(object):
         """
         # TODO: Your code goes here
         # generate random numbers between 0 and width or height inclusive
-        randomWidth = random.randint(0, self.width-1)
-        randomHeight = random.randint(0, self.height-1)
+        randomWidth = random.randint(0, self.roomWidth-1)
+        randomHeight = random.randint(0, self.roomHeight-1)
         return Position(randomWidth, randomHeight)
         
     def isPositionInRoom(self, pos):
@@ -143,49 +144,56 @@ class RectangularRoom(object):
         # TODO: Your code goes here
         # if Pos X or Y are greater than or eqaul to width of room they are outside the room.
         # What if X or Y are negative?
-        if pos.getX() >= self.width: return False
-        if pos.getY() >= self.width: return False
+        if pos.getX() < 0: return False
+        if pos.getY() < 0: return False
+        
+        if pos.getX() >= self.roomWidth: return False
+        if pos.getY() >= self.roomHeight: return False
         return True
 
 
 class BaseRobot(object):
     """
     Represents a robot cleaning a particular room.
-
+    
     At all times the robot has a particular position and direction in
     the room.  The robot also has a fixed speed.
-
+    
     Subclasses of BaseRobot should provide movement strategies by
     implementing updatePositionAndClean(), which simulates a single
     time-step.
     """
+    
     def __init__(self, room, speed):
         """
         Initializes a Robot with the given speed in the specified
         room. The robot initially has a random direction d and a
         random position p in the room.
-
+        
         The direction d is an integer satisfying 0 <= d < 360; it
         specifies an angle in degrees.
-
+        
         p is a Position object giving the robot's position.
-
+        
         room:  a RectangularRoom object.
         speed: a float (speed > 0)
         """
         # TODO: Your code goes here
-        robotSpeed = speed
-        robotDirection = random.randint(0, 360)
-        robotPosition = room.getRandomPosition
+        self.robotSpeed = speed
+        self.robotDirection = random.randint(0, 360)
+        self.robotPosition = room.getRandomPosition()
+        # print self.robotPosition.getX(), self.robotPosition.getY()
+        self.robotRoom = room
     
     def getRobotPosition(self):
         """
         Return the position of the robot.
-
+        
         returns: a Position object giving the robot's position.
         """
         # TODO: Your code goes here
-        return robotPosition
+        # print "self.robotPosition is %s" %self.robotPosition
+        return self.robotPosition
     
     def getRobotDirection(self):
         """
@@ -195,7 +203,7 @@ class BaseRobot(object):
         degrees, 0 <= d < 360.
         """
         # TODO: Your code goes here
-        return robotDirection
+        return self.robotDirection
     
     def setRobotPosition(self, position):
         """
@@ -235,31 +243,33 @@ class Robot(BaseRobot):
         notAtWall = True
             
         while notAtWall:
-            nextPosition = self.robotPosition.getNewPosition(self.robotDirection, self.robotSpeed)
-            if isPositionInRoom(nextPosition):
+            currentPosition = self.getRobotPosition()
+            # print "\ncurrent robot position: %s" % currentPosition
+            # print "current robot position: %s" % self.getRobotPosition()
+            nextPosition = currentPosition.getNewPosition(self.getRobotDirection(), self.robotSpeed)
+            if self.robotRoom.isPositionInRoom(nextPosition):
                 self.robotPosition = nextPosition
                 # tell room this tile is clean
-                room.cleanTileAtPosition(self.robotPosition)
+                self.robotRoom.cleanTileAtPosition(self.robotPosition)
                 notAtWall = False
             else:   # pick a new direction at random
-                robotDirection = random.randint(0, 360)
+                self.robotDirection = random.randint(0, 360)
 
 # === Problem 3
 
-def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,
-                  robot_type, visualize):
+def runSimulation(num_robots, speed, width, height, min_coverage, num_trials, robot_type, visualize):
     """
     Runs NUM_TRIALS trials of the simulation and returns a list of
     lists, one per trial. The list for a trial has an element for each
     timestep of that trial, the value of which is the percentage of
     the room that is clean after that timestep. Each trial stops when
     MIN_COVERAGE of the room is clean.
-
+    
     The simulation is run with NUM_ROBOTS robots of type ROBOT_TYPE,
     each with speed SPEED, in a room of dimensions WIDTH x HEIGHT.
-
+    
     Visualization is turned on when boolean VISUALIZE is set to True.
-
+    
     num_robots: an int (num_robots > 0)
     speed: a float (speed > 0)
     width: an int (width > 0)
@@ -269,8 +279,48 @@ def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,
     robot_type: class of robot to be instantiated (e.g. Robot or
                 RandomWalkRobot)
     visualize: a boolean (True to turn on visualization)
+    
+    test case:
+    avg = runSimulation(10, 1.0, 15, 20, 0.8, 30, Robot, False)
+    
     """
     # TODO: Your code goes here
+    
+    trialsCollection = []                       # list to hold lists of date from each trial
+    for m in range(num_trials-1):               # for each trial
+        # create the room
+        testRoom = RectangularRoom(width, height)
+        
+        # create robots and put them in a list
+        robotList = []
+        for i in range(num_robots):
+            robotList.append(robot_type(testRoom, speed))
+        # print "%i robots created" %len(robotList)
+        
+        
+        # initialize for this trial
+        percentClean = 0.0000000
+        progressList = []
+        # print
+        while percentClean < min_coverage:     # clean until percent clean >= min coverage
+            # print "percentClean, min_coverage", percentClean, min_coverage
+            for eachRobot in robotList:             # for each time-step make each robot clean
+                eachRobot.updatePositionAndClean()
+                # print eachRobot.getRobotPosition().getX(), eachRobot.getRobotPosition().getY()
+            # print "number cleaned, number of tiles: %i, %i" % (testRoom.getNumCleanedTiles(),testRoom.getNumTiles())
+            percentClean = float(testRoom.getNumCleanedTiles()) / float(testRoom.getNumTiles())
+            # print "time-steps: %i, Percent complete %f." % (len(progressList), percentClean)
+            progressList.append(percentClean)
+        trialsCollection.append(progressList)
+    sumTimeSteps = 0    
+    for each in trialsCollection:
+        # print "the %i robot(s) took %i clock ticks to %f clean a %i x %i room." %(num_robots, len(each), min_coverage, width, height)
+        sumTimeSteps += len(each)
+    avgTimeSteps = sumTimeSteps / num_trials
+    print "avgTimeSteps:", avgTimeSteps
+            
+            
+        
 
 # === Provided function
 def computeMeans(list_of_lists):
@@ -278,7 +328,7 @@ def computeMeans(list_of_lists):
     Returns a list as long as the longest list in LIST_OF_LISTS, where
     the value at index i is the average of the values at index i in
     all of LIST_OF_LISTS' lists.
-
+    
     Lists shorter than the longest list are padded with their final
     value to be the same length.
     """
@@ -347,3 +397,17 @@ def showPlot5():
     Produces a plot comparing the two robot strategies.
     """
     # TODO: Your code goes here
+
+
+# === Run code
+# def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,robot_type, visualize):
+# print "simulation 1"
+# avg = runSimulation(10, 1.0, 15, 20, 0.8, 30, Robot, False)
+print "simulation 2"
+avg = runSimulation(01, 1.0, 05, 05, 1.0, 3000, Robot, False)
+print "simulation 3"
+avg = runSimulation(01, 1.0, 10, 10, 0.75, 3000, Robot, False)
+print "simulation 4"
+avg = runSimulation(01, 1.0, 10, 10, 0.9, 3000, Robot, False)
+print "simulation 5"
+avg = runSimulation(01, 1.0, 20, 20, 1.0, 3000, Robot, False)
