@@ -7,7 +7,7 @@ import os, sys, csv
 import math
 import random
 import ps11_visualize
-import pylab
+from pylab import plot, axis, title, ylabel, xlabel, show
 
 # === Provided classes
 
@@ -494,6 +494,31 @@ def write_lists_csv(block_list,file_name, headers):
     # for item in block_list:
     #   fileWriter.write("%s\n" % item)
 
+def showPlot1A():
+    """
+    Produces a plot showing dependence of cleaning time on room size.
+    """
+    
+    room_sizes = ((5,5),(10,10),(15,15),(20,20),(25,25))
+    room_areas = ()
+    for rs in room_sizes:
+        room_areas += (rs[0]*rs[1],)
+        
+    room_size_time = ()
+    num_trials = 100
+    min_coverage = 0.75
+    robots_num = 1
+    for rs in room_sizes:
+        ll = runSimulation(robots_num,1,rs[0],rs[1],min_coverage,num_trials,Robot,False)
+        assert len(ll) == num_trials, "Some error, num_trials != len(ll) " 
+        room_size_time += ( sum([len(l) for l in ll])/float(num_trials) ,)
+    plot(room_areas,room_size_time,linestyle='--',lw=2,marker='o',\
+         markeredgecolor='k',markerfacecolor='r',markersize=8)
+    axis([20,630,0,1050])
+    title('One robot. Time to clean 75% room size for different room sizes')
+    ylabel("Average time over %s trials" % num_trials)
+    xlabel("Room area")    
+    show()
 
 # === Run code
 # def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,robot_type, visualize):
@@ -501,7 +526,7 @@ def write_lists_csv(block_list,file_name, headers):
 # avg = runSimulation(1, 1.0, 25, 20, 0.8, 70, Robot, False)
 
 # print "simulation 2"
-# RobotAvg = runSimulation(1, 1.0, 10, 10, 0.9, 1, Robot, False)
+# RobotAvg = runSimulation(1, 1.0, 10, 10, 0.9, 1, Robot, True)
 # print "simulation 2.1 "
 # 
 # RandomWalkRobotAvg = runSimulation(1, 1.0, 10, 10, 0.9, 1, RandomWalkRobot, False)
@@ -516,7 +541,8 @@ def write_lists_csv(block_list,file_name, headers):
 # write_lists_csv(computeMeans(RobotAvg),"robot_means.csv", ["Means"])
 # write_lists_csv(computeMeans(RandomWalkRobotAvg),"rndRobot_means.csv", ["Means"])
 # 
-showPlot1()
-showPlot2()
-showPlot3()
-showPlot4()
+# showPlot1()
+# showPlot2()
+# showPlot3()
+# showPlot4()
+showPlot1A()
