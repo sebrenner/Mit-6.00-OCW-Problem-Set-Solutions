@@ -4,9 +4,9 @@
 # Collaborators:
 # Time:
 
-import numpy
+# import numpy
 import random
-import pylab
+# import pylab
 import csvExporter
 import os, sys, csv
 
@@ -20,6 +20,23 @@ def write_lists_csv(block_list,file_name, headers):
     fileWriter.writerow(headers)
     for each in block_list:
         fileWriter.writerow(each)
+
+def printHistogram(theList):
+    """
+    takes a list and print a rudimentary historgram of the list values
+    """
+    x_max = max(theList) + 2
+    # make dicitionary 
+    dictionary ={}
+    for value in theList:
+       dictionary[value] = dictionary.get(value,0) + 1
+       
+    sortedKeysList = sorted(dictionary)
+    # print sortedKeysList
+    for each in sortedKeysList:
+        print each, "\t",
+        print "*" * (dictionary[each])
+    
 
 class NoChildException(Exception):
     """
@@ -36,7 +53,6 @@ class SimpleVirus(object):
     """
     Representation of a simple virus (does not model drug effects/resistance).
     """
-    
     def __init__(self, maxBirthProb, clearProb):
         """
         Initialize a SimpleVirus instance, saves all parameters as attributes
@@ -54,7 +70,7 @@ class SimpleVirus(object):
         """
         Stochastically determines whether this virus is cleared from the
         patient's body at a time step. 
-
+        
         returns: Using a random number generator (random.random()), this method
         returns True with probability self.clearProb and otherwise returns
         False.
@@ -106,7 +122,6 @@ class SimplePatient(object):
     Representation of a simplified patient. The patient does not take any drugs
     and his/her virus populations have no drug resistance.
     """
-    
     def __init__(self, viruses, maxPop):
         """
         Initialization function, saves the viruses and maxPop parameters as
@@ -124,7 +139,7 @@ class SimplePatient(object):
     def getTotalPop(self):
         """
         Gets the current total virus population. 
-
+        
         returns: The total virus population (an integer)
         """
         # TODO
@@ -134,7 +149,7 @@ class SimplePatient(object):
         """
         Update the state of the virus population in this patient for a single
         time step. update() should execute the following steps in this order:
-
+        
         - Determine whether each virus particle survives and updates the list
           of virus particles accordingly.
   
@@ -163,7 +178,7 @@ class SimplePatient(object):
         listNonSurvivingViruses.reverse()
         for index in listNonSurvivingViruses:
             self.virusesList.pop(index)
-        print "%i viruses did not survive." % len(listNonSurvivingViruses)
+        print "%i viruses died." % len(listNonSurvivingViruses),
         
         # Calculate current population density. This population density value is used
         # until the next call to update()
@@ -207,7 +222,7 @@ def problem2():
         # (maxBirthProb, clearProb):
         listOfViruses.append(SimpleVirus(0.1, .05))
     patient = SimplePatient(listOfViruses, 1000)
-    # print "patient initially has: %i viruses" % patient.getTotalPop()
+    print "patient initially has: %i viruses" % patient.getTotalPop()
     
     virusCount = []
     trialCount = 0
@@ -218,7 +233,7 @@ def problem2():
         virusCount.append(patient.getTotalPop())
         dataSet.append((trialCount,patient.getTotalPop()))
         trialCount += 1
-        # print "patient has: %i viruses" % patient.getTotalPop()
+        print "Patient has: %i viruses" % patient.getTotalPop()
     write_lists_csv(dataSet,"PS12-problem2-data.csv", "virus population")
 
 
@@ -230,8 +245,7 @@ def problem2():
 class ResistantVirus(SimpleVirus):
     """
     Representation of a virus which can have drug resistance.
-    """    
-    
+    """
     def __init__(self, maxBirthProb, clearProb, resistances, mutProb):
         """
         Initialize a ResistantVirus instance, saves all parameters as attributes
@@ -254,7 +268,8 @@ class ResistantVirus(SimpleVirus):
         self.clearProb = clearProb
         self.resistances = resistances
         self.mutProb = mutProb
-
+        print self.resistances
+    
     def getResistance(self, drug):
         """
         Get the state of this virus particle's resistance to a drug. This method
@@ -268,6 +283,8 @@ class ResistantVirus(SimpleVirus):
         """
         # TODO
         if self.resistances[drug]:
+            print self,
+            print "getResistance(%s) == %s." % (drug, self.resistances[drug])
             return True
         return False 
     
@@ -311,10 +328,15 @@ class ResistantVirus(SimpleVirus):
         NoChildException if this virus particle does not reproduce. 
         """
         # TODO
-        #If the virus particle is not resistant to any drug in activeDrugs,then it does not reproduce.
+        #If the virus particle is not resistant to any drug in activeDrugs, then it does not reproduce.
         for drug in activeDrugs:
+            # print "drug", drug, 
+            # print "self.getResistance(drug)", self.getResistance(drug)
             if self.getResistance(drug) == False:
+                # print "not resistent to drug."
                 raise NoChildException('In reproduce()')
+        
+        # print "self.maxBirthPro:%2.2f, popDensity:%2.2f, prob of repoduction:%2.2f" % (self.maxBirthProb, popDensity, (self.maxBirthProb * (1 - popDensity)) )
         
         if random.random() <= (self.maxBirthProb * (1 - popDensity)):
             offspringResistances = {}
@@ -327,14 +349,13 @@ class ResistantVirus(SimpleVirus):
         else:
             # print "virus does not reproduce"
             raise NoChildException('In reproduce()')
-        
     
+
 class Patient(SimplePatient):
     """
     Representation of a patient. The patient is able to take drugs and his/her
     virus population can acquire resistance to the drugs he/she takes.
     """
-    
     def __init__(self, viruses, maxPop):
         """
         Initialization function, saves the viruses and maxPop parameters as
@@ -364,7 +385,7 @@ class Patient(SimplePatient):
         # TODO
         if newDrug not in self.listOfDrugs:
             self.listOfDrugs.append(newDrug)
-        
+    
     def getPrescriptions(self):
         """
         Returns the drugs that are being administered to this patient.
@@ -374,15 +395,15 @@ class Patient(SimplePatient):
         """
         # TODO
         return self.listOfDrugs
-
+    
     def getResistPop(self, drugResist):
         """
         Get the population of virus particles resistant to the drugs listed in 
         drugResist.
-
+        
         drugResist: Which drug resistances to include in the population (a list
         of strings - e.g. ['guttagonol'] or ['guttagonol', 'grimpex'])
-
+        
         returns: the population of viruses (an integer) with resistances to all
         drugs in the drugResist list.
         """
@@ -443,17 +464,19 @@ class Patient(SimplePatient):
         newVirusCount = 0
         for virus in self.virusesList:
             try:
+                # print "self.listOfDrugs", self.listOfDrugs
                 newVirus = virus.reproduce(popDensity, self.listOfDrugs)
                 self.virusesList.append(newVirus)
                 newVirusCount += 1
                 # This line of code would make the model more accurate by preventing the
-                # virus population from excedeing the max population.  But that wouldn't match the instructions.
+                # virus population from excedeing the max population.  
+                # but that wouldn't match the instructions.
                 # popDensity = (len(self.virusesList)  + newVirusCount) / self.maxPop
             except NoChildException:
                 continue
             
         # print "%i new viruses produced." % newVirusCount
-        
+    
 
 #
 # PROBLEM 4
@@ -480,20 +503,22 @@ def problem4():
         
     dataSet = []
     timeStepCount = 0
-    print "Preparing to loop 3000 times."
-    for timeStep in range(3000):
+    howManyLoops = 300
+    print "Preparing to loop %i times.\n" % howManyLoops
+    for timeStep in range(howManyLoops):
         
-        print "trial #:", timeStepCount, 
+        # print "trial #:", timeStepCount, 
         timeStepCount += 1
         testPatient.update()
         if timeStepCount == 150:
             print "Looped 150 times"
             testPatient.addPrescription("guttagonol")
         dataSet.append((timeStepCount,testPatient.getTotalPop()))
+    print "writing"
     write_lists_csv(dataSet,"PS12-problem-3+4-data.csv", ["Time-Step""virus population"])
-    
-    
-# problem4()
+
+
+problem4()
 #
 # PROBLEM 5
 #
@@ -538,9 +563,7 @@ def problem5(stepsTillTreatment):
             testPatient.addPrescription("guttagonol")
         dataSet.append((timeStepCount,testPatient.getTotalPop()))
     return dataSet
-    
-    # write_lists_csv(dataSet,"PS12-problem-3+4-data.csv", ["virus population"])
-    
+
 def runProblem5(numTrials):
     trialVariations = [300, 150, 75, 0]
     
@@ -577,24 +600,8 @@ def runProblem5(numTrials):
     for theList in histogramData:
         printHistogram(theList)
 
-def printHistogram(theList):
-    """
-    takes a list and print a rudimentary historgram of the list values
-    """
-    x_max = max(theList) + 2
-    # make dicitionary 
-    dictionary ={}
-    for value in theList:
-       dictionary[value] = dictionary.get(value,0) + 1
-    
-    sortedKeysList = sorted(dictionary)
-    # print sortedKeysList
-    for each in sortedKeysList:
-        print each, "\t",
-        print "*" * (dictionary[each])
-    
 
-runProblem5(550)
+# runProblem5(550)
 
 
 
