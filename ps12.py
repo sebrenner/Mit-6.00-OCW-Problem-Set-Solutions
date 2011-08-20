@@ -7,6 +7,19 @@
 import numpy
 import random
 import pylab
+import csvExporter
+import os, sys, csv
+
+def write_lists_csv(block_list,file_name, headers):
+    """
+    Takes a list or list of lists, a files location//name, and a list of headers
+    Writes the itemsof the lists as rows in a CSV file.  Each item of the list is a comma-separated value.
+    Returns the location of the CSV file.
+    """
+    fileWriter = csv.writer(open(file_name, 'wb'), delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    fileWriter.writerow(headers)
+    for each in block_list:
+        fileWriter.writerow(each)
 
 class NoChildException(Exception):
     """
@@ -28,9 +41,9 @@ class SimpleVirus(object):
         """
         Initialize a SimpleVirus instance, saves all parameters as attributes
         of the instance.
-
+        
         maxBirthProb: Maximum reproduction probability (a float between 0-1)
-
+        
         clearProb: Maximum clearance probability (a float between 0-1).
         """
         # TODO
@@ -198,15 +211,18 @@ def problem2():
     
     virusCount = []
     trialCount = 0
+    dataSet = []
     for each in range(300):
         print "trial #:", trialCount
-        trialCount += 1
         patient.update()
         virusCount.append(patient.getTotalPop())
+        dataSet.append((trialCount,patient.getTotalPop()))
+        trialCount += 1
         # print "patient has: %i viruses" % patient.getTotalPop()
+    write_lists_csv(dataSet,"PS12-problem2-data.csv", "virus population")
 
 
-problem2()
+# problem2()
 #
 # PROBLEM 3
 #
@@ -399,7 +415,7 @@ class Patient(SimplePatient):
         integer)
         """
         # TODO
-        print "In update:",
+        # print "In update:",
         # Determine whether each virus particle survives and update the list 
         # of virus particles accordingly.  Use doesClear from base class.
         listNonSurvivingViruses = []
@@ -412,7 +428,7 @@ class Patient(SimplePatient):
         listNonSurvivingViruses.reverse()
         for index in listNonSurvivingViruses:
             self.virusesList.pop(index)
-        print "%i viruses did not survive." % len(listNonSurvivingViruses),
+        # print "%i viruses did not survive." % len(listNonSurvivingViruses),
         
         
         
@@ -420,7 +436,7 @@ class Patient(SimplePatient):
         # until the next call to update()
         # print "len(self.virusesList) / self.maxPop", len(self.virusesList), self.maxPop
         popDensity = float(len(self.virusesList)) / self.maxPop
-        print "popDensity:%2.2f" % popDensity,
+        # print "popDensity:%2.2f" % popDensity,
         # Determine whether each virus particle should reproduce
         # 
         # add new virus to list of viruses.
@@ -436,7 +452,8 @@ class Patient(SimplePatient):
             except NoChildException:
                 continue
             
-        print "%i new viruses produced." % newVirusCount
+        # print "%i new viruses produced." % newVirusCount
+        
 
 #
 # PROBLEM 4
@@ -445,10 +462,10 @@ class Patient(SimplePatient):
 def problem4():
     """
     Runs simulations and plots graphs for problem 4.
-    
+        
     Instantiates a patient, runs a simulation for 150 timesteps, adds
     guttagonol, and runs the simulation for an additional 150 timesteps.
-    
+        
     total virus population vs. time  and guttagonol-resistant virus population
     vs. time are plotted
     """
@@ -460,26 +477,34 @@ def problem4():
     print "%i viruses created." %len(testViruses)
     testPatient = Patient(testViruses, 1000)
     print "Patient created:", testPatient
-    
+        
+    dataSet = []
     timeStepCount = 0
-    print "Preparing to loop 300 times."
-    for timeStep in range(300):
+    print "Preparing to loop 3000 times."
+    for timeStep in range(3000):
+        
         print "trial #:", timeStepCount, 
         timeStepCount += 1
         testPatient.update()
         if timeStepCount == 150:
             print "Looped 150 times"
             testPatient.addPrescription("guttagonol")
-            
-        
-problem4()
+        dataSet.append((timeStepCount,testPatient.getTotalPop()))
+    write_lists_csv(dataSet,"PS12-problem-3+4-data.csv", ["Time-Step""virus population"])
+    
+    
+# problem4()
 #
 # PROBLEM 5
 #
 
-def problem5():
+def problem5(stepsTillTreatment):
     """
     Runs simulations and make histograms for problem 5.
+    
+    Takes the number of steps until the drug is administered.
+    
+    Returns a list of virus puplulations at the end of each step.
     
     Runs multiple simulations to show the relationship between delayed treatment
     and patient outcome.
@@ -489,8 +514,91 @@ def problem5():
     simulation).    
     """
     # TODO
-        
+    # print "Problem 5:"
+    testViruses = []
+    for each in range(100):
+        testViruses.append(ResistantVirus(.1, .05, {"guttagonol":False}, .005))
+    # print "%i viruses created." %len(testViruses)
+    testPatient = Patient(testViruses, 1000)
+    # print "Patient created:", testPatient
     
+    
+    totalTimeSteps = stepsTillTreatment + 150
+    dataSet = []
+    timeStepCount = 0
+    
+    # print "Preparing to loop %i times; treatment at %i." % (totalTimeSteps, stepsTillTreatment)
+    
+    for timeStep in range(totalTimeSteps):
+        # print "trial #:", timeStepCount, 
+        timeStepCount += 1
+        testPatient.update()
+        if timeStepCount == stepsTillTreatment:
+            # print "Looped %i times" % stepsTillTreatment
+            testPatient.addPrescription("guttagonol")
+        dataSet.append((timeStepCount,testPatient.getTotalPop()))
+    return dataSet
+    
+    # write_lists_csv(dataSet,"PS12-problem-3+4-data.csv", ["virus population"])
+    
+def runProblem5(numTrials):
+    trialVariations = [300, 150, 75, 0]
+    
+    # histogramData will be a list of lists. 
+    # Each list lists the final virus populations for each vaiation
+    histogramData = []      
+    
+    # loop through each trial variation
+    for stepsTillTreatment in trialVariations:
+        finalVirusPopulations = []    #["trials:" + str(stepsTillTreatment)]
+        
+        # repeat numTrials trial on this variation
+        # add the list of virus pop to list of 
+        for each in range(numTrials):
+            result = problem5(stepsTillTreatment)
+            
+            # Add the final virus population to list of all final populations for this variation
+            finalVirusPopulations.append(result[-1][-1])
+        # Calculate the average virus population at the end of the trials
+        total = 0
+        
+        for value in finalVirusPopulations:
+            total += value
+        average = float(total) / len(finalVirusPopulations)
+        print "Treatment at %i step; Average viruses at end of %i trials: %2.3f" % (stepsTillTreatment, numTrials, average)
+        print "histogram:"
+        printHistogram(finalVirusPopulations)
+        print "\n\n"
+        # append  list to list of lists
+        histogramData.append(finalVirusPopulations)
+        # print histogramData
+    # write_lists_csv(histogramData,"PS12-problem-5-" + str(stepsTillTreatment) + "-histo-data.csv", ["trials","Treatment at " + stepsTillTreatment])
+    print histogramData
+    for theList in histogramData:
+        printHistogram(theList)
+
+def printHistogram(theList):
+    """
+    takes a list and print a rudimentary historgram of the list values
+    """
+    x_max = max(theList) + 2
+    # make dicitionary 
+    dictionary ={}
+    for value in theList:
+       dictionary[value] = dictionary.get(value,0) + 1
+    
+    sortedKeysList = sorted(dictionary)
+    # print sortedKeysList
+    for each in sortedKeysList:
+        print each, "\t",
+        print "*" * (dictionary[each])
+    
+
+runProblem5(550)
+
+
+
+
 #
 # PROBLEM 6
 #
