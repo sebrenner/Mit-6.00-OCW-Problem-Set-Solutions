@@ -192,8 +192,8 @@ def problem2():
 	pylab.plot( timeSteps, listOfVirusPop )
 	pylab.ylabel( 'Viruse Population' )
 	pylab.xlabel( 'Timesteps' )
-	pylab.title( 'Total virus population over time' )
-	pylab.show()
+	pylab.title( 'Problem 2: Total virus population over time' )
+	# pylab.show()
 
 # run problem2()
 # problem2()
@@ -454,10 +454,10 @@ def problem4():
 	pylab.plot( timeSteps, listOfVirusPop )
 	pylab.ylabel( 'Viruse Population' )
 	pylab.xlabel( 'Timesteps' )
-	pylab.title( 'Total virus population over time' )
+	pylab.title( 'Problem 4: Total virus population over time' )
 	pylab.show()
 
-problem4()
+# problem4()
 #
 # PROBLEM 5
 #
@@ -465,15 +465,98 @@ problem4()
 def problem5():
 	"""
 	Runs simulations and make histograms for problem 5.
-
+	
 	Runs multiple simulations to show the relationship between delayed treatment
 	and patient outcome.
-
+	
 	Histograms of final total virus populations are displayed for delays of 300,
 	150, 75, 0 timesteps (followed by an additional 150 timesteps of
 	simulation).	
 	"""
 	# TODO
+	numPatients = 300
+	# Problem 5: 300 patients, 
+	# ==================================================================
+	# = Run simulation for 300 steps, then treat, then 150 more steps. =
+	# ==================================================================
+	virusCounts =[]
+	for each in range( numPatients ):
+		print "Patient", each,
+		virusCounts.append( runPatietTreatment( 450, 300, "guttagonol" ))
+		print virusCounts[ -1 ]	
+	# graph results
+	pylab.figure()
+	pylab.hist( virusCounts )
+	pylab.ylabel( 'Number of Patients' )
+	pylab.xlabel( 'Final Total Virus Populations' )
+	# title = "Problem 5:" + numPatients + "patients-- 300 timesteps, Treat, 150 more"
+	pylab.title( "Problem 5:" + numPatients + "patients-- 300 timesteps, Treat, 150 more" )
+	
+	# ==================================================================
+	# = Run simulation for 150 steps, then treat, then 150 more steps. =
+	# ==================================================================
+	virusCounts =[]
+	for each in range( numPatients ):
+		print "Patient", each,
+		virusCounts.append( runPatietTreatment( 300, 150, "guttagonol" ))
+		print virusCounts[ -1 ]	
+	# graph results
+	pylab.figure()
+	pylab.hist( virusCounts )
+	pylab.ylabel( 'Number of Patients' )
+	pylab.xlabel( 'Final Total Virus Populations' )
+	pylab.title( "Problem 5:" + numPatients + "patients-- 150 timesteps, Treat, 150 more" )
+	
+	# ==================================================================
+	# = Run simulation for 75 steps, then treat, then 150 more steps. =
+	# ==================================================================
+	virusCounts =[]
+	for each in range( numPatients ):
+		print "Patient", each,
+		virusCounts.append( runPatietTreatment( 225, 75, "guttagonol" ))
+		print virusCounts[ -1 ]	
+	# graph results
+	pylab.figure()
+	pylab.hist( virusCounts )
+	pylab.ylabel( 'Number of Patients' )
+	pylab.xlabel( 'Final Total Virus Populations' )
+	pylab.title( "Problem 5:" + numPatients + "patients--  75 timesteps, Treat, 150 more" )
+
+	# ==================================================================
+	# = Run simulation for 0 steps, then treat, then 150 more steps. =
+	# ==================================================================
+	virusCounts =[]
+	for each in range( numPatients ):
+		print "Patient", each,
+		virusCounts.append( runPatietTreatment( 75, 0, "guttagonol" ))
+		print virusCounts[ -1 ]	
+	# graph results
+	pylab.figure()
+	pylab.hist( virusCounts )
+	pylab.ylabel( 'Number of Patients' )
+	pylab.xlabel( 'Final Total Virus Populations' )
+	pylab.title( "Problem 5:" + numPatients + "patients--0 timesteps, treat, 75 more" )
+
+	pylab.show()
+
+def runPatietTreatment( simulationSteps, timeTillTreatment, drug, initialViruseCount = 100, maxPop = 1000, maxBirthProb = 0.1, clearProb = 0.05, mutProb = 0.005, 	resistances = { 'guttagonol':False }):
+	"""
+	This helper function takes the above parametrs and returns
+	the virus populaton at the end of the treatment.
+	"""
+	# Create Patient
+	virusCount = 0
+	listOfViruses = []
+	for each in range( initialViruseCount ):
+		listOfViruses.append( ResistantVirus( maxBirthProb, clearProb, resistances, mutProb) )
+	testPatient = Patient( listOfViruses, maxPop )
+	
+	for each in range( simulationSteps ):
+		virusCount = testPatient.update()
+		if each == timeTillTreatment: testPatient.addPrescription( drug )
+	return virusCount
+	
+problem5()
 	
 #
 # PROBLEM 6
