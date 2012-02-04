@@ -313,7 +313,6 @@ class Patient( SimplePatient ):
 	Representation of a patient. The patient is able to take drugs and his/her
 	virus population can acquire resistance to the drugs he/she takes.
 	"""
-	
 	def __init__(self, viruses, maxPop):
 		"""
 		Initialization function, saves the viruses and maxPop parameters as
@@ -329,7 +328,7 @@ class Patient( SimplePatient ):
 		self.viruses = viruses
 		self.maxPop = maxPop
 		self.presecribedDrugs = []
-		
+	
 	def addPrescription(self, newDrug):
 		"""
 		Administer a drug to this patient. After a prescription is added, the 
@@ -342,7 +341,7 @@ class Patient( SimplePatient ):
 		"""
 		# TODO
 		self.presecribedDrugs.append( newDrug )
-
+	
 	def getPrescriptions(self):
 		"""
 		Returns the drugs that are being administered to this patient.
@@ -352,7 +351,7 @@ class Patient( SimplePatient ):
 		"""
 		# TODO
 		return self.presecribedDrugs
-		
+	
 	def getResistPop(self, drugResist):
 		"""
 		Get the population of virus particles resistant to the drugs listed in 
@@ -365,14 +364,16 @@ class Patient( SimplePatient ):
 		drugs in the drugResist list.
 		"""
 		# TODO
-		numResistentViruses = 0
+		resistantPopulation = 0
 		for virus in self.viruses:
-			for drug in drugResist:		# drugResist is a list of drugs in patient
-				if not virus.getResistance( drug ):
-					break #	go to next virus
-			numResistentViruses += 1
-		return numResistentViruses
-
+			drugsResisted = 0
+			for drug in drugResist:		# drugResist is a list of drugs
+				if virus.getResistance( drug ):
+					drugsResisted += 1
+			if drugsResisted == len( drugResist ):
+				resistantPopulation += 1
+		return resistantPopulation
+	
 	def update(self):
 		"""
 		Update the state of the virus population in this patient for a single
@@ -405,11 +406,11 @@ class Patient( SimplePatient ):
 					continue
 		self.viruses = self.viruses + newViruses
 		return self.getTotalPop()
-		
+	
+
 #
 # PROBLEM 4
 #
-
 def problem4():
 	"""
 	Runs simulations and plots graphs for problem 4.
@@ -458,10 +459,10 @@ def problem4():
 	pylab.show()
 
 # problem4()
+
 #
 # PROBLEM 5
 #
-		
 def problem5():
 	"""
 	Runs simulations and make histograms for problem 5.
@@ -546,7 +547,7 @@ def problem5():
 	pylab.ylabel( 'Number of Patients' )
 	pylab.xlabel( 'Final Total Virus Populations' )
 	pylab.title( title )
-
+	
 	# ==================================================================
 	# = Run simulation for 0 steps, then treat, then 150 more steps. =
 	# ==================================================================
@@ -569,8 +570,8 @@ def problem5():
 	pylab.ylabel( 'Number of Patients' )
 	pylab.xlabel( 'Final Total Virus Populations' )
 	pylab.title( title )
-
 	pylab.show()
+
 
 def runPatietTreatment( simulationSteps, timeTillTreatment, drug, initialViruseCount = 100, maxPop = 1000, maxBirthProb = 0.1, clearProb = 0.05, mutProb = 0.005, 	resistances = { 'guttagonol':False } ):
 	"""
@@ -601,7 +602,6 @@ def runPatietTreatment( simulationSteps, timeTillTreatment, drug, initialViruseC
 #
 # PROBLEM 6
 #
-
 def problem6():
 	"""
 	Runs simulations and make histograms for problem 6.
@@ -626,7 +626,7 @@ def problem6():
 	
 	"""
 	# Initial Values
-	patientsPerScheme = 30
+	patientsPerScheme = 3
 	treatmentSchemes = [ 300, 150, 75, 0]
 	initialViruseCount = 100
 	maxPop = 1000
@@ -658,11 +658,11 @@ def problem6():
 			finalVirusCounts.append( virusCount )
 			if virusCount <= 50:
 				numCured += 1
-		title = "Waiting %i steps till treating with second drug" % timeTillTreatment
+		
 		print "These are the final virus counts after running 150 steps, treating with Guttagonol, running %i more steps, adding Grimpex, then running 150 more steps:" % timeTillTreatment 
 		print finalVirusCounts
 		print "\nOf the %i patients in the scheme, %i were cured ( %3.1f%% ).  %3.1f%% were not cured." % ( patientsPerScheme, numCured, 100 * ( float( numCured ) / float( patientsPerScheme )) , 100 * (1 - float( numCured ) / float( patientsPerScheme ) ) )
-		
+		title = "Waiting %i steps till treating with second drug. Cure rate = %2.0f%%." % ( timeTillTreatment, 100 * ( float( numCured ) / float( patientsPerScheme )))
 		# graph results
 		pylab.figure()
 		pylab.hist( finalVirusCounts )
@@ -670,21 +670,103 @@ def problem6():
 		pylab.xlabel( 'Final Total Virus Populations' )
 		pylab.title( title )
 	pylab.show()
-		
-		
-problem6()
+
+# problem6()
 
 #
 # PROBLEM 7
 #
-	 
-def problem7():
+def problem7( guttagonolAt, grimpexAt ):
 	"""
 	Run simulations and plot graphs examining the relationship between
 	administration of multiple drugs and patient outcome.
-
+	
 	Plots of total and drug-resistant viruses vs. time are made for a
 	simulation with a 300 time step delay between administering the 2 drugs and
 	a simulations for which drugs are administered simultaneously.		
 	"""
 	# TODO
+	# Initial Values
+	patientsPerScheme = 3
+	initialViruseCount = 100
+	maxPop = 1000
+	maxBirthProb = 0.1
+	clearProb = 0.05
+	resistances = {'guttagonol':False, 'grimpex':False}
+	mutProb = 0.005
+	
+	# Create a list of virusus
+	listOfViruses = []
+	for each in range( initialViruseCount ):
+		listOfViruses.append( ResistantVirus( maxBirthProb, clearProb, resistances, mutProb) )	
+	
+	#Create Patients and simulate timesteps
+	numCured = 0
+	for patient in range( patientsPerScheme ):
+		testPatient = Patient( listOfViruses, maxPop )
+		stepCount = 1
+		finalVirusCounts = [ ]
+		guttagonolResistant = [ ]
+		grimpexResistant = []
+		dualResistant = []
+		
+		while stepCount < grimpexAt + 301:
+			virusCount = testPatient.update()
+			stepCount += 1
+			if stepCount == guttagonolAt:
+				testPatient.addPrescription( "guttagonol" )
+			if stepCount == grimpexAt:
+				testPatient.addPrescription( "grimpex" )
+			finalVirusCounts.append( virusCount )
+			guttagonolResistant.append( testPatient.getResistPop( ['guttagonol'] )  )
+			grimpexResistant.append(  testPatient.getResistPop( ['grimpex'] )  )
+			dualResistant.append( testPatient.getResistPop( ['guttagonol', 'grimpex'] )  )
+		if virusCount <= 50:
+			numCured += 1
+	
+	print "These are the final virus counts after running 150 steps."
+	print "Treating with Guttagonol at %i."	% guttagonolAt
+	print "Treating with Grimpex at %i." % grimpexAt
+	print "Then running 150 more steps:"
+	print "\nOf the %i patients in the scheme, %i were cured ( %3.1f%% ).  %3.1f%% were not cured." % ( patientsPerScheme, numCured, 100 * ( float( numCured ) / float( patientsPerScheme )) , 100 * (1 - float( numCured ) / float( patientsPerScheme ) ) )
+	title = "Guttaganol @%i; Grimpex@ %i. Cure rate = %2.0f%%." % ( guttagonolAt, grimpexAt, 100 * ( float( numCured ) / float( patientsPerScheme )))
+	# graph results
+	pylab.figure()
+	pylab.plot( finalVirusCounts, label='Total')
+	pylab.plot( guttagonolResistant, label='Guttagonol-resistant virus')
+	pylab.plot( grimpexResistant, label='Grimpex-resistant virus')
+	pylab.plot( dualResistant, label='Resistant to both drugs')
+	pylab.ylabel( 'Number Viruses' )
+	pylab.xlabel( 'Time' )
+	pylab.title( title )
+	pylab.legend( loc = 4 )
+	pylab.show()
+
+problem7( guttagonolAt = 150, grimpexAt = 300 )
+problem7( guttagonolAt = 150, grimpexAt = 150 )
+
+
+
+def testResistanceMethod():
+	"""
+	A function for testing the restance method.
+	"""
+	# Initial Values
+	initialViruseCount = 5
+	maxPop = 1000
+	maxBirthProb = 0.1
+	clearProb = 0.05
+	resistances = {'guttagonol':True, 'grimpex':True}
+	mutProb = 0.005
+	
+	# Create a list of virusus
+	listOfViruses = []
+	for each in range( initialViruseCount ):
+		listOfViruses.append( ResistantVirus( maxBirthProb, clearProb, resistances, mutProb) )
+	# Create a patient
+	testPatient = Patient( listOfViruses, maxPop )
+	print testPatient.getResistPop( ['guttagonol'] )
+	print testPatient.getResistPop( ['grimpex'] )
+	print testPatient.getResistPop( ['guttagonol', 'grimpex'] )
+
+# testResistanceMethod()
