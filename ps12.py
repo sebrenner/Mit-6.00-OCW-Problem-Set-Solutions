@@ -471,75 +471,108 @@ def problem5():
 	
 	Histograms of final total virus populations are displayed for delays of 300,
 	150, 75, 0 timesteps (followed by an additional 150 timesteps of
-	simulation).	
+	simulation).
+	
+	If the virus population is less than 50, the patient is considered cured or in remission.
 	"""
 	# TODO
-	numPatients = 300
-	# Problem 5: 300 patients, 
+	numPatients = 200
+	
 	# ==================================================================
 	# = Run simulation for 300 steps, then treat, then 150 more steps. =
 	# ==================================================================
-	virusCounts =[]
+	title = "Problem 5: " + str(numPatients) + " patients-- 300 timesteps, Treat, 150 more timesteps."  
+	print
+	print title
+	virusCounts = []
+	numCured = 0
 	for each in range( numPatients ):
-		print "Patient", each,
-		virusCounts.append( runPatietTreatment( 450, 300, "guttagonol" ))
-		print virusCounts[ -1 ]	
+		finalViruses = runPatietTreatment( 450, 300, "guttagonol" )
+		# print "\nPatient", each, finalViruses, 
+		virusCounts.append( finalViruses )
+		if finalViruses <= 50:
+			numCured += 1	
+	print "\nOf the %i patients in the trial, %i were cured ( %3.1f%% ).  %3.1f%% were not cured." % ( numPatients, numCured, 100 * ( float( numCured ) / float( numPatients )) , 100 * (1 - float( numCured ) / float( numPatients ) ) )
+		
 	# graph results
 	pylab.figure()
 	pylab.hist( virusCounts )
 	pylab.ylabel( 'Number of Patients' )
 	pylab.xlabel( 'Final Total Virus Populations' )
-	# title = "Problem 5:" + numPatients + "patients-- 300 timesteps, Treat, 150 more"
-	pylab.title( "Problem 5:" + numPatients + "patients-- 300 timesteps, Treat, 150 more" )
+	pylab.title( title )
 	
 	# ==================================================================
 	# = Run simulation for 150 steps, then treat, then 150 more steps. =
 	# ==================================================================
-	virusCounts =[]
+	title = "Problem 5:" + str(numPatients) + " patients-- 150 timesteps, Treat, 150 more timesteps."  
+	print
+	print title
+	virusCounts = []
+	numCured = 0
 	for each in range( numPatients ):
-		print "Patient", each,
-		virusCounts.append( runPatietTreatment( 300, 150, "guttagonol" ))
-		print virusCounts[ -1 ]	
+		finalViruses = runPatietTreatment( 300, 150, "guttagonol" )
+		# print "\nPatient", each, finalViruses, 
+		virusCounts.append( finalViruses )
+		if finalViruses <= 50:
+			numCured += 1
+	print "\nOf the %i patients in the trial, %i were cured ( %3.1f%% ).  %3.1f%% were not cured." % ( numPatients, numCured, 100 * ( float( numCured ) / float( numPatients )) , 100 * (1 - float( numCured ) / float( numPatients ) ) )
+		
 	# graph results
 	pylab.figure()
 	pylab.hist( virusCounts )
 	pylab.ylabel( 'Number of Patients' )
 	pylab.xlabel( 'Final Total Virus Populations' )
-	pylab.title( "Problem 5:" + numPatients + "patients-- 150 timesteps, Treat, 150 more" )
+	pylab.title( title )
 	
 	# ==================================================================
 	# = Run simulation for 75 steps, then treat, then 150 more steps. =
 	# ==================================================================
-	virusCounts =[]
+	title = "Problem 5:" + str(numPatients) + " patients--  75 timesteps, Treat, 150 more timesteps." 
+	print
+	print title
+	virusCounts = []
+	numCured = 0
 	for each in range( numPatients ):
-		print "Patient", each,
-		virusCounts.append( runPatietTreatment( 225, 75, "guttagonol" ))
-		print virusCounts[ -1 ]	
+		finalViruses = runPatietTreatment( 225, 75, "guttagonol" )
+		# print "\nPatient", each, finalViruses, 
+		virusCounts.append( finalViruses )
+		if finalViruses <= 50:
+			numCured += 1
+	print "\nOf the %i patients in the trial, %i were cured ( %3.1f%% ).  %3.1f%% were not cured." % ( numPatients, numCured, 100 * ( float( numCured ) / float( numPatients )) , 100 * (1 - float( numCured ) / float( numPatients ) ) )
+		
 	# graph results
 	pylab.figure()
 	pylab.hist( virusCounts )
 	pylab.ylabel( 'Number of Patients' )
 	pylab.xlabel( 'Final Total Virus Populations' )
-	pylab.title( "Problem 5:" + numPatients + "patients--  75 timesteps, Treat, 150 more" )
+	pylab.title( title )
 
 	# ==================================================================
 	# = Run simulation for 0 steps, then treat, then 150 more steps. =
 	# ==================================================================
-	virusCounts =[]
+	title = "Problem 5:" + str(numPatients) + " patients--0 timesteps, treat, 75 more timesteps."
+	print
+	print title
+	virusCounts = []
+	numCured = 0
 	for each in range( numPatients ):
-		print "Patient", each,
-		virusCounts.append( runPatietTreatment( 75, 0, "guttagonol" ))
-		print virusCounts[ -1 ]	
+		finalViruses = runPatietTreatment( 75, 0, "guttagonol" )
+		# print "\nPatient", each, finalViruses, 
+		virusCounts.append( finalViruses )
+		if finalViruses <= 50:
+			numCured += 1
+	print "\nOf the %i patients in the trial, %i were cured ( %3.1f%% ).  %3.1f%% were not cured." % ( numPatients, numCured, 100 * ( float( numCured ) / float( numPatients )) , 100 * (1 - float( numCured ) / float( numPatients ) ) )
+		
 	# graph results
 	pylab.figure()
 	pylab.hist( virusCounts )
 	pylab.ylabel( 'Number of Patients' )
 	pylab.xlabel( 'Final Total Virus Populations' )
-	pylab.title( "Problem 5:" + numPatients + "patients--0 timesteps, treat, 75 more" )
+	pylab.title( title )
 
 	pylab.show()
 
-def runPatietTreatment( simulationSteps, timeTillTreatment, drug, initialViruseCount = 100, maxPop = 1000, maxBirthProb = 0.1, clearProb = 0.05, mutProb = 0.005, 	resistances = { 'guttagonol':False }):
+def runPatietTreatment( simulationSteps, timeTillTreatment, drug, initialViruseCount = 100, maxPop = 1000, maxBirthProb = 0.1, clearProb = 0.05, mutProb = 0.005, 	resistances = { 'guttagonol':False } ):
 	"""
 	This helper function takes the above parametrs and returns
 	the virus populaton at the end of the treatment.
@@ -556,7 +589,14 @@ def runPatietTreatment( simulationSteps, timeTillTreatment, drug, initialViruseC
 		if each == timeTillTreatment: testPatient.addPrescription( drug )
 	return virusCount
 	
-problem5()
+# problem5()
+# Questions:
+# If you consider final virus particle counts of 0–50 to be cured (or in remission), 
+# what percentage of patients were cured (or in remission) at the end of the simulation? 
+# What is the relationship between the number of patients cured (or in remission) 
+# and the delay in treatment? 
+# Explain how this relationship arises from the model.
+
 	
 #
 # PROBLEM 6
@@ -565,15 +605,74 @@ problem5()
 def problem6():
 	"""
 	Runs simulations and make histograms for problem 6.
-
+	
 	Runs multiple simulations to show the relationship between administration
 	of multiple drugs and patient outcome.
 	
 	Histograms of final total virus populations are displayed for lag times of
 	150, 75, 0 timesteps between adding drugs (followed by an additional 150
 	timesteps of simulation).
+	
+	viruses = 100
+	maxPop = 1000
+	
+	maxBirthProb = 0.1
+	clearProb = 0.05
+	resistances = {‘guttagonol’:False ‘grimpex’:False}
+	mutProb = 0.005
+	
+	Run the simulation for 150 time steps before administering guttagonol to the patient. Then run the simulation for 300, 150, 75, and 0 time steps before administering a second drug, grimpex, to the patient. Finally, run the simulation for an additional 150 time steps.
+	
+	
 	"""
-	# TODO
+	# Initial Values
+	patientsPerScheme = 30
+	treatmentSchemes = [ 300, 150, 75, 0]
+	initialViruseCount = 100
+	maxPop = 1000
+	maxBirthProb = 0.1
+	clearProb = 0.05
+	resistances = {'guttagonol':False, 'grimpex':False}
+	mutProb = 0.005
+	
+	# Create a list of virusus
+	listOfViruses = []
+	for each in range( initialViruseCount ):
+		listOfViruses.append( ResistantVirus( maxBirthProb, clearProb, resistances, mutProb) )
+	
+	
+	for timeTillTreatment in treatmentSchemes:
+		finalVirusCounts = [ ]
+		numCured = 0
+		for patient in range( patientsPerScheme ):
+			testPatient = Patient( listOfViruses, maxPop )
+			continueTrial = True
+			stepCount = 1
+			while stepCount < timeTillTreatment + 301:
+				virusCount = testPatient.update()
+				stepCount += 1
+				if stepCount == 150:
+					testPatient.addPrescription( "guttagonol" )
+				if stepCount == timeTillTreatment + 150:
+					testPatient.addPrescription( "grimpex" )
+			finalVirusCounts.append( virusCount )
+			if virusCount <= 50:
+				numCured += 1
+		title = "Waiting %i steps till treating with second drug" % timeTillTreatment
+		print "These are the final virus counts after running 150 steps, treating with Guttagonol, running %i more steps, adding Grimpex, then running 150 more steps:" % timeTillTreatment 
+		print finalVirusCounts
+		print "\nOf the %i patients in the scheme, %i were cured ( %3.1f%% ).  %3.1f%% were not cured." % ( patientsPerScheme, numCured, 100 * ( float( numCured ) / float( patientsPerScheme )) , 100 * (1 - float( numCured ) / float( patientsPerScheme ) ) )
+		
+		# graph results
+		pylab.figure()
+		pylab.hist( finalVirusCounts )
+		pylab.ylabel( 'Number of Patients' )
+		pylab.xlabel( 'Final Total Virus Populations' )
+		pylab.title( title )
+	pylab.show()
+		
+		
+problem6()
 
 #
 # PROBLEM 7

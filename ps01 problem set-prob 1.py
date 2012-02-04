@@ -10,13 +10,22 @@ candidates = [1,3]
 primes = [2]
 
 def next_odd_number(x):
+	"""
+	This function takes an odd number and
+	returns the next odd number.
+	"""
 	if x%2 == 0:
 		print "Error: next_odd_number was pass an non-odd number."
 		return None
 	else:
 		return x+2
+
 		
 def isPrime(x):
+	"""
+	This function takes an integer and returns a 
+	1 if the number is prime and a 0 if it is not prime.
+	"""
 	counter = 1
 	while counter <= x/2:
 		#print counter
@@ -27,22 +36,14 @@ def isPrime(x):
 			return 0
 	return 1
 
-test9 = 9
-test11 = 11
-test15 = 15
-
-# print test9, isPrime(test9)
-# print test11, isPrime(test11)
-# print test15, isPrime(test15)
-
+print 'Begining of Problem 1.'
 
 while len(primes) <= 1000:
 	if isPrime(candidates[-1]):
-		#print candidates[-1], 'is prime'
 		primes.append(candidates[-1])
-		#print primes
-	#else:
-		#print candidates[-1], 'is not prime'
+	# 	print primes
+	# else:
+	# 	print candidates[-1], 'is not prime'
 	next_candidate = next_odd_number(candidates[-1])
 	candidates.append(next_candidate)
 print primes[999]
@@ -54,22 +55,41 @@ print
 ## You should be able to make only some small changes to your solution to Problem 1 to solve this problem as well.
 ## Hints:  While you should see the ratio of the sum of the logs of the primes to the value n slowly get closer to 1, it does not approach this limit monotonically.
 
-## This problem took less than one hour to solve.  2011-01-20
+## Probably took two hours+ to make this work.
 
 print 'Begining of Problem 2.'
 
 import math
 from math import *
+		
+def find_primes_up_to_n(n):
+	"""
+	This function takes a number, n, and 
+	returns the largest prime less than or equal to n.
+	"""
+	#	start with the first candiate
+	candidates = [1,3]  # 1,3,5,7,11,13,17,19
+	
+	#	start with the lowest known prime
+	primes = [2]
+	prime_sum = 0.0
+	while primes[-1] <= n:
+		if isPrime(candidates[-1]):
+			primes.append(candidates[-1])
+			prime_sum = prime_sum + math.log(primes[-1])
+		next_candidate = next_odd_number(candidates[-1])
+		candidates.append(next_candidate)
+	
+	primes = primes[0:-1]
+	
+	print 'N', n,'; the largest prime <=', n, 'is', primes[-1], ';Sum of logs:', prime_sum
+	return prime_sum
 
-prime_sum = 0
-for n in range(0,999):
-	#prime_log = math.log(primes[n])
-	prime_sum = prime_sum + math.log(primes[n])
-print prime_sum
+trials = [5,7,956,78,98,1454,3412,6789,23124]
 
+for each in trials:
+	answer = find_primes_up_to_n(each)
+	print 'and the ratio of these two quantities is ', each / answer
+	print 'end of Problem 2.'
+	
 
-# product = 1
-# for n in range(0,1000):
-#      product = product * primes[n]
-# 
-# print product
