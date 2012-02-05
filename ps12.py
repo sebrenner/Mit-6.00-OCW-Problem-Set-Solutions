@@ -192,11 +192,13 @@ def problem2():
 	pylab.plot( timeSteps, listOfVirusPop )
 	pylab.ylabel( 'Viruse Population' )
 	pylab.xlabel( 'Timesteps' )
-	pylab.title( 'Problem 2: Total virus population over time' )
+	pylab.title( 'ps12.py - Problem 2: Total virus population over time' )
 	# pylab.show()
 
 # run problem2()
 # problem2()
+# Writeup:  Somewhere between 100 and 150 steps the virus population stops growing, stabilizing around 475 (fluctuating between 450 & 500).
+
 
 #
 # PROBLEM 3
@@ -418,7 +420,7 @@ def problem4():
 	Instantiates a patient, runs a simulation for 150 timesteps, adds
 	guttagonol, and runs the simulation for an additional 150 timesteps.
 	
-	total virus population vs. time  and guttagonol-resistant virus population
+	Total virus population vs. time  and guttagonol-resistant virus population
 	vs. time are plotted
 	"""
 	# TODO
@@ -444,21 +446,26 @@ def problem4():
 	
 	# Run 300 timestep on patient.  Record the virus population after each step.  The initial population is 100.  At the 150th timestep 
 	listOfVirusPop = [ ]
-	timeSteps = []
+	guttagonolResistant = [ ]
 	for each in range( simulationSteps ):
 		listOfVirusPop.append( testPatient.update() )
-		timeSteps.append( each )
+		guttagonolResistant.append( testPatient.getResistPop( ['guttagonol'] )  )
 		if each == 150: testPatient.addPrescription( "guttagonol" )
 			
 	# graph results
 	pylab.figure()
-	pylab.plot( timeSteps, listOfVirusPop )
+	pylab.plot( listOfVirusPop, label='Total')
+	pylab.plot( guttagonolResistant, label='Guttagonol-resistant viruses')
 	pylab.ylabel( 'Viruse Population' )
 	pylab.xlabel( 'Timesteps' )
-	pylab.title( 'Problem 4: Total virus population over time' )
+	pylab.title( 'Problem 4: Total virus population over time. Guttagonol prescribed at 150.' )
+	pylab.legend( loc = 2 )
 	pylab.show()
 
 # problem4()
+# As in the other simulations the virus population stabilizes after 150 time steps at about 450-500 viruses. Then number of Guttagonol resistant viruses is negligible until Guttagonol is introduced.  After Guttagonol is introduced, the virus population plummets until a sufficient number develop resistance to Guttagonol, the the virus population appears to return to 450.
+# The trends were consistent with my intuition, but I was surprised that the virus population, after the introduction of Guttagonol, return to 450-500.  I thought it would recover, but stabilize at a lower population.  I figured that since some of the descendants of each virus would mutate to lose their resistance to Guttagonol only a smaller population could be sustained.
+
 
 #
 # PROBLEM 5
@@ -482,7 +489,7 @@ def problem5():
 	# ==================================================================
 	# = Run simulation for 300 steps, then treat, then 150 more steps. =
 	# ==================================================================
-	title = "Problem 5: " + str(numPatients) + " patients-- 300 timesteps, Treat, 150 more timesteps."  
+	title = "ps12.py - Problem 5: " + str(numPatients) + " patients-- 300 timesteps, Treat, 150 more timesteps."  
 	print
 	print title
 	virusCounts = []
@@ -499,7 +506,7 @@ def problem5():
 	pylab.figure()
 	pylab.hist( virusCounts )
 	pylab.ylabel( 'Number of Patients' )
-	pylab.xlabel( 'Final Total Virus Populations' )
+	pylab.xlabel( 'Final Total Virus Populations --' + str(100 * ( float( numCured ) / float( numPatients ))) + "% cured."  )
 	pylab.title( title )
 	
 	# ==================================================================
@@ -522,7 +529,7 @@ def problem5():
 	pylab.figure()
 	pylab.hist( virusCounts )
 	pylab.ylabel( 'Number of Patients' )
-	pylab.xlabel( 'Final Total Virus Populations' )
+	pylab.xlabel( 'Final Total Virus Populations --' + str(100 * ( float( numCured ) / float( numPatients ))) + "% cured."  )
 	pylab.title( title )
 	
 	# ==================================================================
@@ -545,7 +552,7 @@ def problem5():
 	pylab.figure()
 	pylab.hist( virusCounts )
 	pylab.ylabel( 'Number of Patients' )
-	pylab.xlabel( 'Final Total Virus Populations' )
+	pylab.xlabel( 'Final Total Virus Populations --' + str(100 * ( float( numCured ) / float( numPatients ))) + "% cured."  )
 	pylab.title( title )
 	
 	# ==================================================================
@@ -568,7 +575,7 @@ def problem5():
 	pylab.figure()
 	pylab.hist( virusCounts )
 	pylab.ylabel( 'Number of Patients' )
-	pylab.xlabel( 'Final Total Virus Populations' )
+	pylab.xlabel( 'Final Total Virus Populations --' + str(100 * ( float( numCured ) / float( numPatients ))) + "% cured."  )
 	pylab.title( title )
 	pylab.show()
 
@@ -589,16 +596,27 @@ def runPatietTreatment( simulationSteps, timeTillTreatment, drug, initialViruseC
 		virusCount = testPatient.update()
 		if each == timeTillTreatment: testPatient.addPrescription( drug )
 	return virusCount
-	
-# problem5()
-# Questions:
-# If you consider final virus particle counts of 0–50 to be cured (or in remission), 
-# what percentage of patients were cured (or in remission) at the end of the simulation? 
-# What is the relationship between the number of patients cured (or in remission) 
-# and the delay in treatment? 
-# Explain how this relationship arises from the model.
 
-	
+# problem5()
+
+# Writeup:
+# I repeated each condition 200 times.  This was more that enough to obtain a reasonable distribution.  I can tell the distribution is reasonable because the number of trial in each “bucket” of the histogram is above.  In addition, the outcome matched my understanding of reality--the longer treatment is delayed, the less likely it is to be successful.  
+# 
+# This relationship arises in the model because the longer treatment delay, the more time the viruses have to mutate Guttagonol resistance.  If the drug is administered right at the start there are few viruses, and none are resistant.  The more time the elapses, the larger the virus population and the larger the population of Guttagonol-resistant viruses
+# 
+# When treatment is delayed until after 300 timesteps only  2.5% of the patients are cured or in remission.97.5% are not cured.
+# 
+# When treatment is delayed until after 150 timesteps only  5% of the patients are cured or in remission.95% are not cured.
+# 
+# When treatment is delayed until after 75 timesteps only 16% of the patients are cured or in remission.84% are not cured.
+# 
+# When treatment is not delayed 99.5% of the patients are cured or in remission. .54% are not cured.
+# Delay 			% Cured
+# 300				2.5%
+# 150				5%
+# 75				16%
+# 0					99.5%
+
 #
 # PROBLEM 6
 #
@@ -626,7 +644,7 @@ def problem6():
 	
 	"""
 	# Initial Values
-	patientsPerScheme = 3
+	patientsPerScheme = 30
 	treatmentSchemes = [ 300, 150, 75, 0]
 	initialViruseCount = 100
 	maxPop = 1000
@@ -662,7 +680,7 @@ def problem6():
 		print "These are the final virus counts after running 150 steps, treating with Guttagonol, running %i more steps, adding Grimpex, then running 150 more steps:" % timeTillTreatment 
 		print finalVirusCounts
 		print "\nOf the %i patients in the scheme, %i were cured ( %3.1f%% ).  %3.1f%% were not cured." % ( patientsPerScheme, numCured, 100 * ( float( numCured ) / float( patientsPerScheme )) , 100 * (1 - float( numCured ) / float( patientsPerScheme ) ) )
-		title = "Waiting %i steps till treating with second drug. Cure rate = %2.0f%%." % ( timeTillTreatment, 100 * ( float( numCured ) / float( patientsPerScheme )))
+		title = "ps12.py - Problem 6: %i steps till treatment with 2nd drug. Cure rate = %2.0f%%." % ( timeTillTreatment, 100 * ( float( numCured ) / float( patientsPerScheme )))
 		# graph results
 		pylab.figure()
 		pylab.hist( finalVirusCounts )
@@ -672,6 +690,16 @@ def problem6():
 	pylab.show()
 
 # problem6()
+# Write up:
+# As with the earlier experiments, delaying treatment reduces the likelihood that the treatment will eradicate the viruses.  The more time the viruses are given to build their population and evolved resistance to a drug the more likely the drug will fail.
+# 
+# However, in this dual drug treatment is more effective than a single drug treatment, even when the second drug is delayed.  This is likely because the first drug had reduced the population of the viruses.
+
+# Delay 		% Cured
+# 300			~7%
+# 150			~10%
+# 75			~93%
+# 0				~100%
 
 #
 # PROBLEM 7
@@ -720,7 +748,7 @@ def problem7( guttagonolAt, grimpexAt ):
 		grimpexResistant.append(  testPatient.getResistPop( ['grimpex'] )  )
 		dualResistant.append( testPatient.getResistPop( ['guttagonol', 'grimpex'] )  )
 	# graph results
-	title = "PS12.py - Problem 7: Guttaganol @%i; Grimpex@ %i." % ( guttagonolAt, grimpexAt )
+	title = "ps12.py - Problem 7: Guttagonol @%i; Grimpex@ %i." % ( guttagonolAt, grimpexAt )
 	
 	pylab.figure()
 	pylab.plot( totalViruses, label='Total')
@@ -730,7 +758,7 @@ def problem7( guttagonolAt, grimpexAt ):
 	pylab.ylabel( 'Number Viruses' )
 	pylab.xlabel( 'Time' )
 	pylab.title( title )
-	pylab.legend( loc = 4 )
+	pylab.legend( loc = 1 )
 	pylab.show()
 
 problem7( guttagonolAt = 150, grimpexAt = 300 )
