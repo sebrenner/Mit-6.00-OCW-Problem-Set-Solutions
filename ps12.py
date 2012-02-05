@@ -687,75 +687,46 @@ def problem7( guttagonolAt, grimpexAt ):
 	"""
 	# TODO
 	# Initial Values
-	patientsPerScheme = 3
 	initialViruseCount = 100
 	maxPop = 1000
 	maxBirthProb = 0.1
 	clearProb = 0.05
 	resistances = {'guttagonol':False, 'grimpex':False}
 	mutProb = 0.005
-	
+	totalViruses = [ ]
+	guttagonolResistant = [ ]
+	grimpexResistant = []
+	dualResistant = []
+	stepCount = 1
+		
 	# Create a list of virusus
 	listOfViruses = []
 	for each in range( initialViruseCount ):
 		listOfViruses.append( ResistantVirus( maxBirthProb, clearProb, resistances, mutProb) )	
 	
-	#Create Patients and simulate timesteps
-	numCured = 0
-	totalVirusesSummed = []
-	guttagonolResistantSummed = [ ]
-	grimpexResistantSummed = []
-	dualResistantSummed = []
+	#Create Patient 
+	testPatient = Patient( listOfViruses, maxPop )
 	
-	for patient in range( patientsPerScheme ):
-		testPatient = Patient( listOfViruses, maxPop )
-		stepCount = 1
-		totalViruses = [ ]
-		guttagonolResistant = [ ]
-		grimpexResistant = []
-		dualResistant = []
-		
-		# this while loop asumes that grimpex is adminstered last and the 300 more time steps are simulated.
-		while stepCount < grimpexAt + 301:
-			virusCount = testPatient.update()
-			stepCount += 1
-			if stepCount == guttagonolAt:
-				testPatient.addPrescription( "guttagonol" )
-			if stepCount == grimpexAt:
-				testPatient.addPrescription( "grimpex" )
-			totalViruses.append( testPatient.getTotalPop() )
-			guttagonolResistant.append( testPatient.getResistPop( ['guttagonol'] )  )
-			grimpexResistant.append(  testPatient.getResistPop( ['grimpex'] )  )
-			dualResistant.append( testPatient.getResistPop( ['guttagonol', 'grimpex'] )  )
-		if virusCount <= 50:
-			numCured += 1
-	# add virus counts from last patient to summed lists
-	print totalVirusesSummed
-	print totalViruses
-	totalVirusesSummed = [sum(pair) for pair in zip( totalVirusesSummed, totalViruses )] 
-	guttagonolResistantSummed = [sum(pair) for pair in zip( guttagonolResistantSummed, guttagonolResistant )] 
-	grimpexResistantSummed = [sum(pair) for pair in zip( grimpexResistantSummed, grimpexResistant )] 
-	dualResistantSummed = [sum(pair) for pair in zip( dualResistantSummed, dualResistant )]
-	
-	# Loop through each list dividing each item in list by total number of patients.
-	# This creates makes each list item the average of he patient trials
-	for eachList in [ totalVirusesSummed, guttagonolResistantSummed, grimpexResistantSummed, dualResistantSummed ]:
-		for item in eachList:
-			item = float(item) / float(patientsPerScheme)
-	
-	
-	print "These are the final virus counts after running 150 steps."
-	print "Treating with Guttagonol at %i."	% guttagonolAt
-	print "Treating with Grimpex at %i." % grimpexAt
-	print "Then running 150 more steps:"
-	print "\nOf the %i patients in the scheme, %i were cured ( %3.1f%% ).  %3.1f%% were not cured." % ( patientsPerScheme, numCured, 100 * ( float( numCured ) / float( patientsPerScheme )) , 100 * (1 - float( numCured ) / float( patientsPerScheme ) ) )
-	title = "Guttaganol @%i; Grimpex@ %i. Cure rate = %2.0f%%." % ( guttagonolAt, grimpexAt, 100 * ( float( numCured ) / float( patientsPerScheme )))
+	# this while loop asumes that grimpex is adminstered last and the 300 more time steps are simulated.
+	while stepCount < grimpexAt + 301:
+		virusCount = testPatient.update()
+		stepCount += 1
+		if stepCount == guttagonolAt:
+			testPatient.addPrescription( "guttagonol" )
+		if stepCount == grimpexAt:
+			testPatient.addPrescription( "grimpex" )
+		totalViruses.append( testPatient.getTotalPop() )
+		guttagonolResistant.append( testPatient.getResistPop( ['guttagonol'] )  )
+		grimpexResistant.append(  testPatient.getResistPop( ['grimpex'] )  )
+		dualResistant.append( testPatient.getResistPop( ['guttagonol', 'grimpex'] )  )
 	# graph results
+	title = "PS12.py - Problem 7: Guttaganol @%i; Grimpex@ %i." % ( guttagonolAt, grimpexAt )
+	
 	pylab.figure()
-	pylab.plot( totalVirusesSummed, label='Total')
-	pylab.plot( guttagonolResistantSummed, label='Guttagonol-resistant virus')
-	pylab.plot( grimpexResistantSummed, label='Grimpex-resistant virus')
-	pylab.plot( dualResistantSummed, label='Resistant to both drugs')
+	pylab.plot( totalViruses, label='Total')
+	pylab.plot( guttagonolResistant, label='Guttagonol-resistant virus')
+	pylab.plot( grimpexResistant, label='Grimpex-resistant virus')
+	pylab.plot( dualResistant, label='Resistant to both drugs')
 	pylab.ylabel( 'Number Viruses' )
 	pylab.xlabel( 'Time' )
 	pylab.title( title )
