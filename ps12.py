@@ -195,8 +195,8 @@ def problem2():
 	pylab.title( 'ps12.py - Problem 2: Total virus population over time' )
 	# pylab.show()
 
-# run problem2()
-# problem2()
+
+problem2()
 # Writeup:  Somewhere between 100 and 150 steps the virus population stops growing, stabilizing around 475 (fluctuating between 450 & 500).
 
 
@@ -462,7 +462,7 @@ def problem4():
 	pylab.legend( loc = 2 )
 	pylab.show()
 
-# problem4()
+problem4()
 # As in the other simulations the virus population stabilizes after 150 time steps at about 450-500 viruses. Then number of Guttagonol resistant viruses is negligible until Guttagonol is introduced.  After Guttagonol is introduced, the virus population plummets until a sufficient number develop resistance to Guttagonol, the the virus population appears to return to 450.
 # The trends were consistent with my intuition, but I was surprised that the virus population, after the introduction of Guttagonol, return to 450-500.  I thought it would recover, but stabilize at a lower population.  I figured that since some of the descendants of each virus would mutate to lose their resistance to Guttagonol only a smaller population could be sustained.
 
@@ -597,7 +597,7 @@ def runPatietTreatment( simulationSteps, timeTillTreatment, drug, initialViruseC
 		if each == timeTillTreatment: testPatient.addPrescription( drug )
 	return virusCount
 
-# problem5()
+problem5()
 
 # Writeup:
 # I repeated each condition 200 times.  This was more that enough to obtain a reasonable distribution.  I can tell the distribution is reasonable because the number of trial in each “bucket” of the histogram is above.  In addition, the outcome matched my understanding of reality--the longer treatment is delayed, the less likely it is to be successful.  
@@ -689,7 +689,7 @@ def problem6():
 		pylab.title( title )
 	pylab.show()
 
-# problem6()
+problem6()
 # Write up:
 # As with the earlier experiments, delaying treatment reduces the likelihood that the treatment will eradicate the viruses.  The more time the viruses are given to build their population and evolved resistance to a drug the more likely the drug will fail.
 # 
@@ -763,3 +763,12 @@ def problem7( guttagonolAt, grimpexAt ):
 
 problem7( guttagonolAt = 150, grimpexAt = 300 )
 problem7( guttagonolAt = 150, grimpexAt = 150 )
+
+# ====================
+# = Problem 8 writup =
+# ====================
+# To model patients forgetting to take their drugs I would add a property to the patient object and modify the getPrescriptions() method. 
+# 
+# The property, a float, would model the likelihood that a patient would take their prescriptions, e.g., .9 for a patient who takes their prescriptions 90% of the time.
+# 
+# The getPrescriptions() method would be modified to model this likelihood.  For example if the likelihood the patient would take their drugs is .9 then the method would return the active drugs only 90% of the time.
