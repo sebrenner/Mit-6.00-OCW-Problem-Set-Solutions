@@ -1,33 +1,38 @@
+#!/usr/local/bin/python
 # Problem Set 3 (Problem 4)
 # Name: Scott Brenner
 # Collaborators: None
 # Date: 2011-02-01
 # Time: 11:29 AM
 #
+#	This was so hard to solve.  I think it took over eight hours spread over a week.  I kept getting stuck on how to remove the perfect matches from the tuple that was returned.
 
-#!/usr/local/bin/python
+#	If you remove the matches from the beginning of the tuple using positions, the positions, of course, shift.  If you try to do it by matching the perfect matches to the entire realm of matches, you can't just rely on comparison of the perfect start to a member of the entire realm.  You must test a conjunction of ALL perfect matches to the member of the entire realm.  I couldn't get this to work. Instead I built a list of the positions of the perfect matches and then removed those elements from the answer tuple.  The key was learning to iterate through a tuple backwards.  That way removing an element did not alter the position of the elements yet to be removed.
 
 from string import *		#	used for find()
-
 
 # Problem 4
 # Write a function, called subStringMatchExactlyOneSub which takes two arguments: a target string and a key string. This function should return a tuple of all starting points of matches of the key to the target, such that at exactly one element of the key is incorrectly matched to the target. Complete the definition.  Save your answers in a file named ps3d.py.
 
-target1 = 'atgacatgcacaagtatgcat'
+target1 = 'atgacatgcacaagtatgcatatgacatgcacaagtatgcatatgacatgcacaagtatgcatatgacatgcacaagtatgcat'
 #		   01234567890123456789
 target2 = 'atgaatgcatggatgtaaatgcag'
 
 # key strings
 
 key10 = 'a'
-key11 = 'atg' 	# matches in target1 == (0, 5, 15)	length == 3
-key12 = 'atgc'	# matches in target1 == (5, 15)
+key11 = 'atg' 	
+key12 = 'atgc'
 key13 = 'atgca'
 
 
 
 def subStringMatchExactlyOneSub(target,key):
-	"""This function takes two arguments: a target string and a key string. It returns a tuple of all starting points of matches of the key to the target, such that at exactly one element of the key is incorrectly matched to the target."""
+	"""
+	This function takes two arguments: a target string and a key string. 
+	
+	It returns a tuple of all starting points of matches of the key to the target, such that at exactly one element of the key is incorrectly matched to the target.
+	"""
 
 	possible_answer = subStringMatchOneSub(key,target)
 	answer = possible_answer
@@ -38,36 +43,37 @@ def subStringMatchExactlyOneSub(target,key):
 	for i in range(0,len(possible_answer)):
 		for j in range(0,len(perfect_matches)):
 			if possible_answer[i] == perfect_matches[j]:
-#				print "matches:", possible_answer[i]
+				#print "matches:", possible_answer[i]
 				to_remove_from_answer += (i,)
-#				print to_remove_from_answer
+				#print to_remove_from_answer
+
 	# this for loop removes the items from the possible_answer tuple begin at the end and working forward. 
-	for m in to_remove_from_answer:
-		print to_remove_from_answer[-m]
-		answer = to_remove_from_answer[-m]
-		print answer
-	return to_remove_from_answer
+	for m in reversed(to_remove_from_answer):
+		#print to_remove_from_answer[-m]
+		#print m
+		answer = answer[:m] + answer[m+1:]
+		# print answer
+	return answer
 
 
-def constrainedMatchPair(firstMatch,secondMatch,length, excluded):  
-	"""This function takes four arguments: a tuple representing starting points for the first substring, a tuple representing starting points for the second substring, and the length of the first substring; and a tuple representing the starting point of perfect matches.
+def constrainedMatchPair(firstMatch,secondMatch,length):  
+	"""
+	This function takes three arguments: a tuple representing starting points for the first substring, a tuple representing starting points for the second substring, and the length of the first substring.
 	
-	The function returns a tuple of all members (call it n) of the first tuple for which there is an element in the second tuple (call it k) such that n+m+1 = k, where m is the length of the first substring, the starting points of perfect matches are omitted."""
+	The function returns a tuple of all members (call it n) of the first tuple for which there is an element in the second tuple (call it k) such that n+m+1 = k, where m is the length of the first substring.
+	"""
 	
 	answer = ()
-	matches = False 
 	for i in firstMatch:
 		for j in secondMatch:
 			if i + length + 1 == j:
-				for t in excluded:
-					if i == t :
-						matches = True
-				if matches == False:
-					answer += (i,)
+				answer += (i,)
 	return answer
 
 def subStringMatchExact(target, key):
-	"""This function returns a tuple of the starting position(s) of a key string within a target string"""
+	"""
+	This function returns a tuple of the starting position(s) of a key string within a target string.
+	"""
 	answer_tuple = () # initialize the tuple we will return
 	start = 0 # use this initial the starting point for find()
 	while find(target, key, start) >=0:
@@ -77,7 +83,9 @@ def subStringMatchExact(target, key):
 	return answer_tuple
 
 def subStringMatchOneSub(key,target):
-    """search for all locations of key in target, with one substitution"""
+    """
+	Search for all locations of key in target, with one substitution
+	"""
     allAnswers = ()
     for miss in range(0,len(key)):
         # miss picks location for missing element
@@ -91,14 +99,12 @@ def subStringMatchOneSub(key,target):
         match2 = subStringMatchExact(target,key2)
         # when we get here, we have two tuples of start points
         # need to filter pairs to decide which are correct
-        # and we need to remove the starting points of perfect matchs.
-        perfect_matches = subStringMatchExact(target, key)
-        filtered = constrainedMatchPair(match1,match2,len(key1), perfect_matches)
-
+        filtered = constrainedMatchPair(match1,match2,len(key1))
         allAnswers = allAnswers + filtered
         #print 'match1',match1
         #print 'match2',match2
         #print 'possible matches for',key1,key2,'start at',filtered
     return allAnswers
     
-print subStringMatchOneSub(key12, target1)
+#print subStringMatchOneSub(key12,target1)
+print subStringMatchExactlyOneSub(target1,key11)

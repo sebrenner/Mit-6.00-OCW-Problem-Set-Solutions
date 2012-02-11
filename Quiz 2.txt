@@ -87,14 +87,19 @@ def findMedian(L):
 	print L[4]							# "Circle with radius 4"
 	print f(L)							# "Circle with radius 8"
 
+It prints:
+
+16.0Circle with radius 4Circle with radius 8
 
 4)  The following two formulas can be used to formalize a 0-1 knapsack problem. 
         1) See handout.         2) See handout. 
     
     4.1) What do each of n, pi, xi, wi, and C represent? 
+		Beats me.
 
     4.2) Use the formulas (refer to them as “formula 1” and “formula 2”) to 
         describe the optimization problem to be solved. 
+		No idea.
 
 5. Write pseudo code describing merge sort.
 	def msort(L):
@@ -112,27 +117,29 @@ def findMedian(L):
 				sorted.append(Lb)
 		return sorted
 		
-	
 
 6)  Consider the two functions specified below that are used to play a “guess a number game.” 
 
 def cmpGuess(guess): 
     """
-    Assumes that guess is an integer in range(maxVal).
-    returns -1 if guess is < than the magic number, 0 if it is equal to the    magic number and 1 if it is greater than the magic number.
+    	Assumes that guess is an integer in range(maxVal).
+    	returns -1 if guess is < than the magic number, 0 if it is equal to the
+	magic number and 1 if it is greater than the magic number.
     """ 
+
 
 def findNumber(maxVal): 
     """
-    Assumes that maxVal is a positive integer.  Returns a number, num, such that 
-cmpGuess(num) == 0.
+    	Assumes that maxVal is a positive integer.
+	Returns a number, num, such that cmpGuess(num) == 0.
     """
-	num = maxVal / 2
-	if cmpGuess(num) == 0:
-		return num
-	elif cmpGuess(num) == -1:
-		return num / 2
-	else:
+	guess = maxVal / 2
+	if cmpGuess( guess ) == 0:
+		return guess
+	elif cmpGuess( guess ) == 1:  	# Guess is too high
+		findNumber ( guess / 2)
+	elif cmpGuess( guess ) == -1:	# Guess is too low
+		findNumber ( guess + maxVal / 4)
 
 
     Write a Python implementation of findNumber that guesses the magic number defined by 

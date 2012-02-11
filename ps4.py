@@ -291,4 +291,5 @@ def testFindMaxExpenses():
     expenses = findMaxExpenses(salary, save, preRetireGrowthRates,
                                postRetireGrowthRates, epsilon)
     print expenses
+
 testFindMaxExpenses() # just to test

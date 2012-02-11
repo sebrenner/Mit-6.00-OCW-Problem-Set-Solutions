@@ -3,7 +3,7 @@ MIT OpenCourseWare
 
 This problem set is designed to help you solidify your understanding of some material that we have covered in lecture, but not emphasized on the programming problems. You should do it, but do NOT hand it in.
 
-1) What is the computational complexity of fact0? Explain your answer.
+#1) What is the computational complexity of fact0? Explain your answer.
 
 def fact0(i):
 	assert type(i) == int and i >= 0
@@ -13,7 +13,7 @@ def fact0(i):
 
 This is recursive function. Each time the function calls itself the time to complete the function increases by 1x. Its computational complexity is linear time: O(n).
 
-2) What is the computational complexity of fact1? Explain your answer.
+#2) What is the computational complexity of fact1? Explain your answer.
 def fact1(i):
 	assert type(i) == int and i >= 0
 	res = 1
@@ -24,7 +24,7 @@ def fact1(i):
 
 This is not recursive and its complexity is linear.
 
-3) What is the computational complexity of makeSet? Explain your answer.
+#3) What is the computational complexity of makeSet? Explain your answer.
 def makeSet(s):
 	assert type(s) == str
 	res = ''
@@ -35,7 +35,7 @@ def makeSet(s):
 
 This is not recursive and its complexity is linear.  The longer the string the longer it takes to parse it.
 
-4) What is the computational complexity of intersect? Explain your answer.
+#4) What is the computational complexity of intersect? Explain your answer.
 def intersect(s1, s2):
 
 	assert type(s1) == str and type(s2) == str
@@ -49,7 +49,7 @@ def intersect(s1, s2):
 
 This one depends on makeSet().  If make set is linear then, the complexity of this function depends on the the length of makeSet(s1).  It the set returned by makeSet(s1) is long then the function will take longer to run, but it will only take a little bit longer to run because the for loop will only run one more time for each additional character in the makeSet(s1) set.
 
-5) Present a hand simulation of the code below. Describe the value to which each identifier is bound after each step of the computation. Note that “s1” and “s2” exist in more than one scope.
+#5) Present a hand simulation of the code below. Describe the value to which each identifier is bound after each step of the computation. Note that “s1” and “s2” exist in more than one scope.
 
 def swap0(s1, s2):
 	assert type(s1) == list and type(s2) == list
@@ -69,7 +69,7 @@ out of swap0: s1, s1 = [1],[2]
 The global s2 and s2 are not altered by the local s1 and s2 swap.  swap0() only swaps the local s1 and s2.
 
 
-6) Present a hand simulation of the following code:
+#6) Present a hand simulation of the following code:
 def swap1(s1, s2):
 	assert type(s1) == list and type(s2) == list
 	return s2, s1
@@ -84,7 +84,7 @@ out of swap0: s1, s1 = [2],[1]
 
 In this snippit swap1() 'swaps' s1 and s2 by merely returning them in reverse order. The real magic is in the assignment operator assigning two variable at the same time.
 
-7) Present a hand simulation of the following code:
+#7) Present a hand simulation of the following code:
 def rev(s):
 	assert type(s) == list
 	for i in range(len(s)/2):
